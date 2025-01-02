@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Students List</title>
+</head>
+<body>
+    <h1>Admin List</h1>
+    
+    <table border="1">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Department</th>
+            <th>Photo</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="student : ${students}">
+        
+            <td th:text="${student.name}"></td>
+            <td th:text="${student.email}"></td>
+            <td th:text="${student.department}"></td>
+            
+            <td>
+    			<img th:src="@{${student.photo}}" alt="Student Photo" style="height: 100px; width: 100px "/>
+			</td>
+        </tr>
+        
+    </tbody>
+</table>
+
+    <h1>Admin Details</h1>
+    <div th:each="admin : ${admins}">
+        <p><span th:text="${admin.name}"></span></p>
+        <p><span th:text="${admin.email}"></span></p>
+        <p><span th:text="${admin.password}"></span></p>
+        <h2 th:if="${admin.role == 'FACULTY'}">Hello!</h2>
+    </div>
+
+    <br><br>
+    <button th:data-url="@{/addStudentDetail}">Add Student</button>
+    <a th:href="@{/addDetail}" class="text-blue-500 hover:underline">Login here</a>
+</body>
+</html>
