@@ -55,6 +55,14 @@ public class AdminController {
 
     
 	public String photoUrl;
+
+	public int fees;
+
+	public String email;
+
+	public int totalMarks;
+
+	public int percentage;
     
     
 	@GetMapping("/register")
@@ -69,14 +77,42 @@ public class AdminController {
 
 	        if (result.hasErrors()) {
 	            model.addAttribute("error", "There are errors in the form. Please correct them.");
-	            return "register"; // Show registration form again if errors
+	            return "register"; 
 	        }
 
 	        adminService.saveAdminData(adminModel);
 
-	        return "redirect:/login"; // Redirect to login page after successful registration
+	        return "redirect:/login"; 
 	    } 
+	 @GetMapping("/StudentPage")
+	 public String studentPage(Model model) {
+	     StudentModel students = studentRepo.findByEmail(email);
+	     model.addAttribute("students", students);
+	     return "StudentPage";
+	 }
 	 
+	 @GetMapping("/StudentProfile")
+	 public String FacultyProfile(@RequestParam("email") String email, Model model) {
+	     StudentModel students = studentRepo.findByEmail(email);
+	     System.out.println(email);
+	     model.addAttribute("students", students);
+	     return "StudentProfile";
+	 }
+	 @GetMapping("/payFees")
+	 public String payFees(@RequestParam("email") String email, Model model) {
+	     StudentModel students = studentRepo.findByEmail(email);
+	     System.out.println(email);
+	     model.addAttribute("students", students);
+	     return "payFees";
+	 }
+
+	 @GetMapping("/reportCard")
+	 public String reportCard(@RequestParam("email") String email, Model model) {
+	     StudentModel students = studentRepo.findByEmail(email);
+	     System.out.println(email);
+	     model.addAttribute("students", students);
+	     return "reportCard";
+	 }
 	 @PostMapping("/addStudent")
 	 public String addStudent(
 	         @RequestParam String name,
@@ -84,6 +120,7 @@ public class AdminController {
 	         @RequestParam String password,
 	         @RequestParam String department,
 	         @RequestParam String division,
+//	         @RequestParam int rollNumber,
 	         @RequestParam("marks") String marksJson, // Receive marks as JSON string
 	         @RequestParam("photo") MultipartFile photo,
 	         @RequestParam String role,
@@ -105,12 +142,27 @@ public class AdminController {
 	     adminModel.setPassword(password);
 	     AdminModel savedAdmin = adminRepo.save(adminModel);
 
+	     fees=0;
+	     totalMarks = 0;
+	     percentage =0;
+	     for (int mark : marks) {
+	         totalMarks += mark;
+	     }
+	     
+	     percentage = totalMarks/marks.size();
+
+	     System.out.println("Total Marks: " + totalMarks);
+	     
 	     StudentModel student = new StudentModel();
 	     student.setName(name);
 	     student.setEmail(email);
 	     student.setDepartment(department);
 	     student.setDivision(division);
 	     student.setMarks1(marksJson); 
+//	     student.setRollNumber(rollNumber);
+	     student.setFees(fees);
+	     student.setPercentage(percentage);
+	     student.setTotalMarks(totalMarks);
 	     student.setPhoto("/" + photo.getOriginalFilename());
 	     student.setAdmin(savedAdmin);
 
@@ -119,6 +171,30 @@ public class AdminController {
 	     model.addAttribute("successMessage", "Student added successfully!");
 	     return "addDetail";
 	 }
+	 
+	 @PostMapping("/submitData")
+	 public String handleFormSubmit(@RequestParam("fees") int additionalFees, 
+	                                @RequestParam("studentEmail") String email, 
+	                                Model model) {
+	     System.out.println(" additional fee: " + additionalFees);
+	     
+	     StudentModel student = studentRepo.findByEmail(email);
+	     
+	     if (student != null) {
+	         int currentFees = student.getFees();
+	         int updatedFees = currentFees + additionalFees;
+	         student.setFees(updatedFees);
+	         
+	         studentRepo.save(student);
+	         model.addAttribute("students", student);
+	         model.addAttribute("successMessage", "Fees updated successfully!");
+	     } else {
+	         model.addAttribute("errorMessage", "Student not found!");
+	     }
+	     return "payFees";
+	 }
+
+
 
     @GetMapping("/viewAdmins")
     public String viewAdmins(Model model) {
@@ -149,22 +225,28 @@ public class AdminController {
     	@RequestParam String password,
     	Model model	) {
     	
-    	
     	AdminModel admin = adminRepo.findByEmail(email); 
-    	
     	if (admin!=null && admin.getPassword().equals(password)) {
     		
             model.addAttribute("admins", admin);
             
+            
             if(admin.getRole().equalsIgnoreCase("FACULTY"))
             {
-            	StudentModel sm = new StudentModel();
-            	
             	List<StudentModel> students = studentRepo.findAll();
-                model.addAttribute("students", students);
-                model.addAttribute("photoUrl", photoUrl); // Add the photo URL to the model
+            	model.addAttribute("students", students);
+            	StudentModel sm = new StudentModel();
             	return "facultyPage";  
             }
+            if(admin.getRole().equalsIgnoreCase("USER"))
+            {
+            	StudentModel students = studentRepo.findByEmail(email);
+            	model.addAttribute("students", students);
+            	StudentModel sm = new StudentModel();
+                return "StudentPage";
+            }
+            
+            
             return "StudentPage";
             
         } else {

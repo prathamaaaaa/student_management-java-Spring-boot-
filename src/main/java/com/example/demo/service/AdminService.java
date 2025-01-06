@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.model.AdminModel;
+
 import com.example.demo.model.FacultyModel;
 import com.example.demo.repo.AdminRepository;
 import com.example.demo.repo.FacultyRepository;

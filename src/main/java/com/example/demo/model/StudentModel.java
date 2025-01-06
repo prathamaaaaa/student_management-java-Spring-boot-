@@ -20,6 +20,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -36,15 +38,18 @@ public class StudentModel {
     @Column(unique = true)
 	private String email;
 
+    
     private String department;
+//    private int rollNumber;
     private String division;
     @Lob
     private String photo; 
-    
-    
+    private int fees;
+    private int totalMarks;
+    private int percentage;
     @Lob
     @Column(columnDefinition = "TEXT")
-    private String marks1; // Store marks as a JSON string
+    private String marks1; 
 
     @ManyToOne 
     private AdminModel admin;

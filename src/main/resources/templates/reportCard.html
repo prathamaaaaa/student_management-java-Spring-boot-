@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Report Card</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+            width: 20%;
+        }
+        td {
+            width: 80%;
+        }
+        td img {
+            border-radius: 50%;
+            height: 100px;
+            width: 100px;
+        }
+        .marks-list li {
+            list-style-type: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Student Report Card</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Detail</th>
+                <th>Information</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="student : ${students}">
+                <td><strong>Name</strong></td>
+                <td th:text="${student.name}"></td>
+            </tr>
+            <tr th:each="student : ${students}">
+                <td><strong>Email</strong></td>
+                <td th:text="${student.email}"></td>
+            </tr>
+            <tr th:each="student : ${students}">
+                <td><strong>Department</strong></td>
+                <td th:text="${student.department}"></td>
+            </tr>
+            <tr th:each="student : ${students}">
+                <td><strong>Division</strong></td>
+                <td th:text="${student.division}"></td>
+            </tr>
+            <tr th:each="student : ${students}">
+                <td><strong>Photo</strong></td>
+                <td>
+                    <img th:src="@{${student.photo}}" alt="Student Photo" />
+                </td>
+            </tr>
+            <tr th:each="student : ${students}">
+                <td><strong>Fees</strong></td>
+                <td th:text="${student.fees}"></td>
+            </tr>
+            <tr th:each="student : ${students}">
+                <td><strong>Subjects</strong></td>
+                <td>
+                    <ul>
+                        <li th:each="mark : ${student.marks1}">
+                            <span th:text="${mark}"></span>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+            <tr th:each="student : ${students}">
+                <td><strong>Total Marks</strong></td>
+                <td th:text="${student.totalMarks}"></td>
+            </tr>
+            <tr th:each="student : ${students}">
+                <td><strong>Percentage</strong></td>
+                <td th:text="${student.percentage + '%'}"></td>
+            </tr>
+            <tr th:each="student : ${students}">
+                <td><strong>Details</strong></td>
+                <td class="action-link">
+                    <a th:href="@{/StudentProfile?email={email}(email=${student.email})}">View Profile</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

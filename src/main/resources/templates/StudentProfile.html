@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Profile</title>
+    <!-- TailwindCSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 text-gray-800">
+
+    <div class="container mx-auto p-6">
+        <h1 class="text-3xl font-bold text-center text-blue-600 mb-8">Student Profiles</h1>
+        
+            <!-- Student Profile Card -->
+            <div th:each="students : ${students}" class="bg-white shadow-lg rounded-lg p-6">
+                <div class="flex flex-col items-center">
+                    <!-- Student Photo -->
+                    <img th:src="@{${students.photo}}" alt="Student Photo" class="rounded-full w-32 h-32 object-cover mb-4">
+                    
+                    <!-- Student Name -->
+                    <h2 class="text-xl font-semibold text-gray-800" th:text="${students.name}"></h2>
+                    
+                    <!-- Student Department -->
+                    <p class="text-gray-600" th:text="${students.department}"></p>
+                </div>
+                
+                <!-- Student Details -->
+                <div class="mt-4 flex justify-center ">
+                    <p><span class="font-bold">Email:</span> <span th:text="${students.email}"></span></p>
+                </div>
+                <div class="mt-4 flex justify-center ">
+                    <p><span class="font-bold">Fees:</span> <span th:text="${students.fees}"></span></p>
+                </div>
+<a th:href="@{/payFees?email={email}(email=${students.email})}">pay</a>
+<a th:href="@{/ReportCard?email={email}(email=${students.email})}">report</a>
+
+            </div>
+    </div>
+
+</body>
+</html>
