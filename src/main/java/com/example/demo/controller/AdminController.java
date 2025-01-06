@@ -24,8 +24,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.model.AdminModel;
+import com.example.demo.model.FacultyModel;
 import com.example.demo.model.StudentModel;
 import com.example.demo.repo.AdminRepository;
+import com.example.demo.repo.FacultyRepository;
 import com.example.demo.repo.StudentRepository;
 import com.example.demo.service.AdminService;
 import com.example.demo.validation.adminValidation;
@@ -46,6 +48,9 @@ public class AdminController {
 	
 	@Autowired
 	private StudentRepository studentRepo;
+	
+	@Autowired
+	private FacultyRepository facultyRepo;
 
     @Autowired
     private AdminService adminService;
@@ -98,6 +103,14 @@ public class AdminController {
 	     model.addAttribute("students", students);
 	     return "StudentProfile";
 	 }
+	 
+	 @GetMapping("/FacultyProfile")
+	 public String FacultyProfiles(@RequestParam("email") String email, Model model) {
+	     FacultyModel faculty = facultyRepo.findByEmail(email);
+	     System.out.println(email);
+	     model.addAttribute("faculty", faculty);
+	     return "FacultyProfile";
+	 }
 	 @GetMapping("/payFees")
 	 public String payFees(@RequestParam("email") String email, Model model) {
 	     StudentModel students = studentRepo.findByEmail(email);
@@ -113,6 +126,93 @@ public class AdminController {
 	     model.addAttribute("students", students);
 	     return "reportCard";
 	 }
+	 
+	 
+	 @GetMapping("/update")
+	 public String update(@RequestParam("email") String email, Model model) {
+	     StudentModel students = studentRepo.findByEmail(email);
+	     System.out.println(email);
+	     model.addAttribute("students", students);
+	     return "update";
+	 }
+	 @GetMapping("/updateByFaculty")
+	 public String updateByFaculty(@RequestParam("email") String email, Model model) {
+	     StudentModel students = studentRepo.findByEmail(email);
+	     System.out.println(email);
+	     model.addAttribute("students", students);
+	     return "updateByFaculty";
+	 }
+	 @PostMapping("/updatedByFaculty")
+	 public String updatedByFaculty(@RequestParam("email") String email,
+			 @RequestParam String name , 
+			 @RequestParam String department,
+	         @RequestParam("photo") MultipartFile photo,
+	         @RequestParam String division,
+			 Model model) throws IOException {
+	     StudentModel students = studentRepo.findByEmail(email);
+	     System.out.println(email);
+	     
+	     Path path = Paths.get("src/main/resources/static/" + photo.getOriginalFilename());
+	     Files.createDirectories(path.getParent());
+	     Files.write(path, photo.getBytes()); 
+	     
+	     
+	     students.setName(name);
+	     students.setDepartment(department);
+	     students.setDivision(division);
+	     students.setPhoto("/" + photo.getOriginalFilename());
+	     
+	     
+	     studentRepo.save(students);
+	     model.addAttribute("students", students);
+	     return "updateByFaculty";
+	 }
+	
+	 @PostMapping("/updated")
+	 public String updated(@RequestParam("email") String email,
+			 @RequestParam String name , 
+			 @RequestParam String department,
+	         @RequestParam("photo") MultipartFile photo,
+	         @RequestParam String division,
+			 Model model) throws IOException {
+	     StudentModel students = studentRepo.findByEmail(email);
+	     System.out.println(email);
+	     
+	     Path path = Paths.get("src/main/resources/static/" + photo.getOriginalFilename());
+	     Files.createDirectories(path.getParent());
+	     Files.write(path, photo.getBytes()); 
+	     
+	     
+	     students.setName(name);
+	     students.setDepartment(department);
+	     students.setDivision(division);
+	     students.setPhoto("/" + photo.getOriginalFilename());
+	     
+	     
+	     studentRepo.save(students);
+	     model.addAttribute("students", students);
+	     return "update";
+	 }
+	 
+//	 @PostMapping("/updated")
+//	 public String updeted(@RequestParam String name ,   Model model ) {
+//		 
+//		 StudentModel s = studentRepo.findByEmail(email);
+//		 s.setName(name);
+//		 studentRepo.save(s);
+//		System.out.println("s"+name); 
+//		return  "update";
+//		 
+////	 }
+	 
+	 @GetMapping("/searchStudents")
+	    public String searchStudents(@RequestParam("searchQuery") String searchQuery, Model model) {
+	        List<StudentModel> students = studentRepo.findByNameContainingIgnoreCase(searchQuery);
+	        model.addAttribute("students", students);
+	        return "facultyPage";
+	    }
+	 
+
 	 @PostMapping("/addStudent")
 	 public String addStudent(
 	         @RequestParam String name,
@@ -243,11 +343,11 @@ public class AdminController {
             	StudentModel students = studentRepo.findByEmail(email);
             	model.addAttribute("students", students);
             	StudentModel sm = new StudentModel();
-                return "StudentPage";
+                return "StudentProfile";
             }
             
             
-            return "StudentPage";
+            return "StudentProfile";
             
         } else {
         	return "login";  

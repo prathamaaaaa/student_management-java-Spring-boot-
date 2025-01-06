@@ -1,10 +1,36 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" 3content="width=device-width, initial-scale=1.0">
+    <title>faculty Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+
+<body class="bg-gray-100 text-gray-800">
+
+    <div class="container mx-auto p-6">
+        <h1 class="text-3xl font-bold text-center text-blue-600 mb-8">faculty Profiles</h1>
+        
+            <!-- Student Profile Card -->
+            <div th:each="faculty : ${faculty}" class="bg-white shadow-lg rounded-lg p-6">
+                <div class="flex flex-col items-center">
+                    <!-- Student Photo -->
+                    
+                    <!-- Student Name -->
+                    <h2 class="text-xl font-semibold text-gray-800" th:text="${faculty.name}"></h2>
+                    
+                    <!-- Student Department -->
+                </div>
+                
+                <!-- Student Details -->
+                <div class="mt-4 flex justify-center ">
+                    <p><span class="font-bold">Email:</span> <span th:text="${faculty.email}"></span></p>
+                </div>
+                
+					<a th:href="@{/facultyPage}">page</a>
+				</div>
+    </div>
 
 </body>
 </html>

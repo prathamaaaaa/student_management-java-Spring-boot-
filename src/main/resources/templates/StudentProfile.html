@@ -4,40 +4,61 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Profile</title>
-    <!-- TailwindCSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-gray-100 text-gray-800">
+<body class="bg-gray-50 text-gray-800">
 
     <div class="container mx-auto p-6">
-        <h1 class="text-3xl font-bold text-center text-blue-600 mb-8">Student Profiles</h1>
-        
-            <!-- Student Profile Card -->
-            <div th:each="students : ${students}" class="bg-white shadow-lg rounded-lg p-6">
-                <div class="flex flex-col items-center">
-                    <!-- Student Photo -->
-                    <img th:src="@{${students.photo}}" alt="Student Photo" class="rounded-full w-32 h-32 object-cover mb-4">
-                    
-                    <!-- Student Name -->
-                    <h2 class="text-xl font-semibold text-gray-800" th:text="${students.name}"></h2>
-                    
-                    <!-- Student Department -->
-                    <p class="text-gray-600" th:text="${students.department}"></p>
+        <h1 class="text-3xl font-bold text-center text-blue-600 mb-10">Student Profile</h1>
+		
+        <!-- Student Profile Card -->
+        <div th:each="students : ${students}" class="bg-white shadow-xl rounded-lg max-w-sm mx-auto p-6 mb-8 hover:shadow-2xl transition-shadow duration-300">
+
+            <!-- Student Photo and Info -->
+            <div class="flex flex-col items-center mb-6">
+                <!-- Student Photo -->
+                <img th:src="@{${students.photo}}" alt="Student Photo" class="rounded-full w-32 h-32 object-cover mb-4 border-4 border-blue-500 shadow-lg">
+                
+                <!-- Student Name -->
+                <h2 class="text-2xl font-semibold text-gray-800 mb-2" th:text="${students.name}"></h2>
+                
+                
+            </div>
+
+            <!-- Student Details -->
+            <!-- Student Department -->
+            <div class="text-gray-700 mb-6">
+            <div class="flex justify-between mb-2">
+                    <span class="font-bold">Email:</span>
+                    <span th:text="${students.email}"></span>
+                </div>
+                <div class="flex justify-between mb-2">
+                    <span class="font-bold">Department :</span>
+                    <span th:text="${students.department}"></span>
+                </div>
+                <div class="flex justify-between mb-2">
+                    <span class="font-bold">Division :</span>
+                    <span th:text="${students.division}"></span>
                 </div>
                 
-                <!-- Student Details -->
-                <div class="mt-4 flex justify-center ">
-                    <p><span class="font-bold">Email:</span> <span th:text="${students.email}"></span></p>
+                <div class="flex justify-between mb-4">
+                    <span class="font-bold">Fees:</span>
+                    <span th:text="${students.fees}"></span>
                 </div>
-                <div class="mt-4 flex justify-center ">
-                    <p><span class="font-bold">Fees:</span> <span th:text="${students.fees}"></span></p>
-                </div>
-<a th:href="@{/payFees?email={email}(email=${students.email})}">pay</a>
-<a th:href="@{/ReportCard?email={email}(email=${students.email})}">report</a>
-
             </div>
-    </div>
 
+            <!-- Action Links -->
+            <div class="flex justify-between">
+                <a th:href="@{/payFees?email={email}(email=${students.email})}" class="w-full text-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors duration-300">Pay Fees</a>
+                <a th:href="@{/reportCard?email={email}(email=${students.email})}" class="w-full text-center bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md transition-colors duration-300 mt-4 sm:mt-0 sm:ml-4">View Report</a>
+                <a th:href="@{/update?email={email}(email=${students.email})}" class="w-full text-center bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md transition-colors duration-300 mt-4 sm:mt-0 sm:ml-4">update</a>
+                
+            </div>
+            
+        </div>
+
+    </div>
+	
 </body>
 </html>

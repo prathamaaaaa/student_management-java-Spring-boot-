@@ -4,41 +4,71 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Students List</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-50 font-sans text-gray-900">
+<script>
+    function resetSearch() {
+        document.getElementById('searchBar').value = '';
+        document.forms[0].submit();
+    }
+</script>
+<body class="bg-gray-100 font-sans text-gray-900">
 
     <!-- Header Section -->
-    <header class="bg-blue-600 text-white p-6 text-center">
-        <h1 class="text-4xl font-semibold">Admin Dashboard</h1>
-        <p class="mt-2 text-lg">Manage Student and Admin Details</p>
+    <header class="bg-blue-600 text-white p-6 shadow-md">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-4xl font-semibold">Faculty Dashboard</h1>
+            <div th:each="admin : ${admins}" class="mt-4">
+                <!-- Profile Icon as a Link -->
+                <p>hello</p>
+                <a th:href="@{/FacultyProfile?email={email}(email=${admin.email})}" class="text-white hover:text-gray-300">
+                    <i class="fa-solid fa-user text-3xl"></i>
+                </a>
+            </div>
+        </div>
     </header>
 
     <!-- Search Bar Section -->
-    <div class="bg-white shadow p-4">
+    <div class="bg-white shadow p-6 mt-6 rounded-lg mx-auto max-w-7xl">
         <div class="container mx-auto flex justify-between items-center">
-            <input 
-                type="text" 
-                placeholder="Search by name or email..." 
-                class="w-full md:w-2/3 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                id="searchBar" 
-                oninput="filterTable()"
-            />
+            <form action="/searchStudents" method="get" class="w-full md:w-2/3 flex space-x-4">
+                <input 
+                    type="text" 
+                    name="searchQuery" 
+                    placeholder="Search by name or email..." 
+                    class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                    id="searchBar" 
+                />
+                <button 
+                    type="submit" 
+                    class="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 transition duration-300"
+                >
+                    Search
+                </button>
+            </form>
             <button 
-                class="ml-4 px-6 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700" 
-                onclick="resetSearch()">
-                Reset
-            </button>
+    class="ml-4 px-6 py-3 bg-gray-300 text-gray-700 rounded-lg shadow-md hover:bg-gray-400 focus:ring-2 focus:ring-gray-500 transition duration-300" 
+    onclick="resetSearch()"
+>
+    Reset
+</button>
+
         </div>
     </div>
 
-    <!-- Main Content Section -->
+    <!-- Students List -->
     <main class="container mx-auto p-6">
-
-        <!-- Students List -->
         <section class="mb-12">
-            <h2 class="text-2xl font-bold text-blue-600 mb-4">Students List</h2>
-            <table id="studentsTable" class="min-w-full table-auto bg-white shadow-lg rounded-lg overflow-hidden">
+            <h2 class="text-4xl text-center font-bold text-blue-600 mb-6">Students List</h2>
+            
+            <!-- Check if students list is empty or null -->
+            <div th:if="${students == null or students.isEmpty()}">
+                <p class="text-red-500 text-3xl text-center">No Students Found</p>
+            </div>
+            
+            <!-- Display table if students exist -->
+            <table id="studentsTable" class="min-w-full table-auto bg-white shadow-lg rounded-lg overflow-hidden" th:unless="${students == null or students.isEmpty()}">
                 <thead class="bg-blue-600 text-white">
                     <tr>
                         <th class="px-6 py-3 text-left">Name</th>
@@ -46,70 +76,46 @@
                         <th class="px-6 py-3 text-left">Department</th>
                         <th class="px-6 py-3 text-left">Photo</th>
                         <th class="px-6 py-3 text-left">Actions</th>
-                    </tr>
+                        <th class="px-6 py-3 text-left">Edit</th>
+                        
+                    </tr>    
                 </thead>
                 <tbody>
-                    <tr th:each="student : ${students}" class="border-b">
+                    <!-- Iterate over students -->
+                    <tr th:each="student : ${students}" class="border-b hover:bg-gray-50">
                         <td class="px-6 py-4" th:text="${student.name}"></td>
                         <td class="px-6 py-4" th:text="${student.email}"></td>
                         <td class="px-6 py-4" th:text="${student.department}"></td>
                         <td class="px-6 py-4">
-                            <img th:src="@{${student.photo}}" alt="Student Photo" class="w-20 h-20 object-cover rounded-full" />
+                            <img th:src="@{${student.photo}}" alt="Student Photo" class="w-16 h-16 object-cover rounded-full" />
                         </td>
+                        
                         <td class="px-6 py-4">
                             <a 
                                 th:href="@{/reportCard?email={email}(email=${student.email})}" 
-                                class="text-blue-500 hover:underline">
-                                Go to Target Page
+                                class="text-blue-500 hover:text-blue-700 transition duration-200 ease-in-out">
+                                View Report
                             </a>
                         </td>
+                        
+                        <td><a 
+                                th:href="@{/updateByFaculty?email={email}(email=${student.email})}" 
+                                class="text-blue-500 hover:text-blue-700 transition duration-200 ease-in-out">
+                                edit
+                            </a>
+                            </td>
                     </tr>
                 </tbody>
             </table>
-        </section>
-
-        <!-- Admin Details -->
-        <section class="mb-12">
-            <h2 class="text-2xl font-bold text-blue-600 mb-4">Admin Details</h2>
-            <div th:each="admin : ${admins}" class="space-y-4">
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <p class="text-xl font-semibold">Name: <span th:text="${admin.name}"></span></p>
-                    <p class="text-lg">Email: <span th:text="${admin.email}"></span></p>
-                    <p class="text-lg">Password: <span th:text="${admin.password}"></span></p>
-                    <h2 th:if="${admin.role == 'FACULTY'}" class="mt-4 text-green-600 font-semibold">Hello, Faculty!</h2>
-                </div>
-            </div>
-        </section>
-
-        <!-- Actions Section -->
-        <section class="flex justify-center space-x-4">
-            <button class="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700" th:data-url="@{/addStudentDetail}">Add Student</button>
-            <a href="#" th:href="@{/addDetail}" class="text-blue-500 hover:underline">Register</a>
-        </section>
-
-    </main>
-
-    <script>
-        function filterTable() {
-            const searchInput = document.getElementById('searchBar').value.toLowerCase();
-            const rows = document.querySelectorAll('#studentsTable tbody tr');
             
-            rows.forEach(row => {
-                const name = row.children[0].textContent.toLowerCase();
-                const email = row.children[1].textContent.toLowerCase();
-                
-                if (name.includes(searchInput) || email.includes(searchInput)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        }
-
-        function resetSearch() {
-            document.getElementById('searchBar').value = '';
-            filterTable();
-        }
-    </script>
+            <!-- Add Student Button -->
+            <a th:href="@{/addDetail}" class="mt-6 inline-block px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 transition duration-300">
+                Add Student
+            </a>
+            
+            
+        </section>
+    </main>
+	
 </body>
 </html>

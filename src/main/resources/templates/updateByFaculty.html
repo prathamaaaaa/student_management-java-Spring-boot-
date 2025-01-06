@@ -74,48 +74,42 @@
     <div class="container mx-auto p-8">
         <div class="bg-white shadow-md rounded-lg p-8">
             <h2 class="text-3xl font-bold mb-6">Add Student</h2>
-            <form action="/addStudent" method="POST" enctype="multipart/form-data" class="space-y-4">
+            <form action="/updatedByFaculty" method="POST" enctype="multipart/form-data" class="space-y-4">
                 <!-- Name -->
                 <div>
                     <label for="name" class="block font-bold text-lg">Name *</label>
-                    <input type="text" id="name" name="name" class="border rounded-lg p-2 w-full" placeholder="Enter student's name" required>
+                    <input type="text"  th:value="${students.name}"  id="name" name="name" class="border rounded-lg p-2 w-full" placeholder="Enter student's name" required>
                 </div>
 				
                 <!-- Password -->
-                <div>
-                    <label for="password" class="block font-bold text-lg">Password *</label>
-                    <input type="password" id="password" name="password" class="border rounded-lg p-2 w-full" placeholder="Enter a password" required>
-                </div>
-
+                
                 <!-- Email -->
                 <div>
-                    <label for="email" class="block font-bold text-lg">Email *</label>
-                    <input type="email" id="email" name="email" class="border rounded-lg p-2 w-full" placeholder="Enter student's email" required>
+                    <input type="email" id="email" th:value="${students.email}"  name="email" class="hidden  border rounded-lg p-2 w-full" placeholder="Enter student's email" required>
                 </div>
 
                 <!-- Department -->
                 <div>
                     <label for="department" class="block font-bold text-lg">Department *</label>
-                    <input type="text" id="department" name="department" class="border rounded-lg p-2 w-full" placeholder="Enter department" required>
+                    <input type="text" id="department" th:value="${students.department}"  name="department" class="border rounded-lg p-2 w-full" placeholder="Enter department" required>
                 </div>
 
                 <!-- Division -->
                 <div>
                     <label for="division" class="block font-bold text-lg">Division *</label>
-                    <select id="division" name="division" class="border rounded-lg p-2 w-full">
+                    <select id="division" name="division"  th:value="${students.division}"  class="border rounded-lg p-2 w-full">
                         <option value="Div A">Div A</option>
                         <option value="Div B">Div B</option>
                         <option value="Div C">Div C</option>
                     </select>
                 </div>
 
-                <!-- Marks -->
-                <div id="marksContainer">
-                    <div>
-                        <label for="marks1" class="block font-bold text-lg">Marks for Subject 1*</label>
-                        <input type="number" id="marks1" name="marks1" class="border rounded-lg p-2 w-full" placeholder="Enter marks for subject 1" required>
-                    </div>
-                </div>
+                <!-- Marks                 <div id="marksContainer">
+    <div th:each="mark : ${student.marks1}">
+        <label for="marks1" class="block font-bold text-lg">Marks for Subject 1*</label>
+        <input type="number" th:value="${mark}" id="marks1" name="marks1" class="border rounded-lg p-2 w-full" placeholder="Enter marks for subject 1">
+    </div>
+</div>-->
 
                 <div class="mt-4">
                     <button type="button" onclick="addSubjectField()" class="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-700">
@@ -128,7 +122,7 @@
                     <label for="photo" class="block font-bold text-lg">Upload Photo *</label>
                     <input type="file" id="photo" name="photo" class="border rounded-lg p-2 w-full" accept="image/*" required onchange="previewImage(event)">
                     <!-- Image preview -->
-                    <img id="photoPreview" src="#" alt="Image Preview" style="display:none; margin-top: 10px; width: 150px; height: 150px; object-fit: cover;">
+                    <img id="photoPreview"  th:src="${students.photo}"  alt="Image Preview" style=" margin-top: 10px; width: 150px; height: 150px; object-fit: cover;">
                 </div>
 
                 <div>
