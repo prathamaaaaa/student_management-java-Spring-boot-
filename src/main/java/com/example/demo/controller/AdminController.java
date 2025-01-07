@@ -1,5 +1,4 @@
 package com.example.demo.controller;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
@@ -8,11 +7,13 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -30,7 +31,10 @@ import com.example.demo.repo.AdminRepository;
 import com.example.demo.repo.FacultyRepository;
 import com.example.demo.repo.StudentRepository;
 import com.example.demo.service.AdminService;
+import com.example.demo.service.EmailService;
 import com.example.demo.validation.adminValidation;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import aj.org.objectweb.asm.TypeReference;
@@ -43,6 +47,14 @@ import jakarta.validation.Validator;
 @Controller
 public class AdminController {
     
+	
+	 @Autowired
+	    private EmailService emailService;
+	 
+
+	    @Autowired
+	    private JavaMailSender javaMailSender;
+
 	@Autowired
 	private AdminRepository adminRepo;
 	
@@ -69,7 +81,30 @@ public class AdminController {
 
 	public int percentage;
     
-    
+	@GetMapping("/Password")
+	 public String Password( Model model) {
+		
+	     return "Password";
+	 }
+	
+	@PostMapping("/forgot")
+	 public String forgot( Model model,
+			 @RequestParam String email
+			 ) {
+		
+		AdminModel admin = adminRepo.findByEmail(email);
+		
+		String generatedPassword1 = generatePassword();
+		 admin.setPassword(generatedPassword1);
+		 adminRepo.save(admin);
+	     
+
+	     String emailSubject = "Your updeted Portal Password";
+	        String emailText = "Hello " + admin.getName() + ",\n\nYour password for the student portal is: " + generatedPassword1;
+	        emailService.sendEmail(email, emailSubject, emailText);
+		
+	     return "Password";
+	 }
 	@GetMapping("/register")
 	public String adminPage(Model model) {
 	    model.addAttribute("adminModel", new AdminModel()); 
@@ -104,6 +139,19 @@ public class AdminController {
 	     return "StudentProfile";
 	 }
 	 
+	 @GetMapping("/facultyPage")
+	 public String facultyPage(Model model,
+			 @RequestParam String email
+			 ) {
+     	List<StudentModel> students = studentRepo.findAll();
+     	AdminModel admin = adminRepo.findByEmail(email);     		
+            model.addAttribute("admins", admin);
+	     model.addAttribute("students", students);
+	     return "facultyPage"; 
+	 }
+
+
+	 
 	 @GetMapping("/FacultyProfile")
 	 public String FacultyProfiles(@RequestParam("email") String email, Model model) {
 	     FacultyModel faculty = facultyRepo.findByEmail(email);
@@ -111,6 +159,9 @@ public class AdminController {
 	     model.addAttribute("faculty", faculty);
 	     return "FacultyProfile";
 	 }
+	 
+	 
+	 
 	 @GetMapping("/payFees")
 	 public String payFees(@RequestParam("email") String email, Model model) {
 	     StudentModel students = studentRepo.findByEmail(email);
@@ -131,15 +182,23 @@ public class AdminController {
 	 @GetMapping("/update")
 	 public String update(@RequestParam("email") String email, Model model) {
 	     StudentModel students = studentRepo.findByEmail(email);
-	     System.out.println(email);
+	     System.out.println("emial"+email);
 	     model.addAttribute("students", students);
 	     return "update";
 	 }
 	 @GetMapping("/updateByFaculty")
-	 public String updateByFaculty(@RequestParam("email") String email, Model model) {
+	 public String updateByFaculty(@RequestParam("email") String email, Model model) throws JsonMappingException, JsonProcessingException {
 	     StudentModel students = studentRepo.findByEmail(email);
-	     System.out.println(email);
+	     System.out.println("e : "+email);
+	     
+	     
+	     ObjectMapper objectMapper = new ObjectMapper();
+	     List<Integer> marks = objectMapper.readValue(students.getMarks1(), new com.fasterxml.jackson.core.type.TypeReference<List<Integer>>() {});
+	     System.out.println("m : "+marks.size());
+
+	     model.addAttribute("marks", marks); 	     
 	     model.addAttribute("students", students);
+	     
 	     return "updateByFaculty";
 	 }
 	 @PostMapping("/updatedByFaculty")
@@ -147,6 +206,7 @@ public class AdminController {
 			 @RequestParam String name , 
 			 @RequestParam String department,
 	         @RequestParam("photo") MultipartFile photo,
+	         @RequestParam("marks") String marksJson, // Receive marks as JSON string
 	         @RequestParam String division,
 			 Model model) throws IOException {
 	     StudentModel students = studentRepo.findByEmail(email);
@@ -155,20 +215,27 @@ public class AdminController {
 	     Path path = Paths.get("src/main/resources/static/" + photo.getOriginalFilename());
 	     Files.createDirectories(path.getParent());
 	     Files.write(path, photo.getBytes()); 
-	     
-	     
+	     ObjectMapper objectMapper = new ObjectMapper();
+	     List<Integer> marks = objectMapper.readValue(marksJson, new com.fasterxml.jackson.core.type.TypeReference<List<Integer>>() {});
+
+
+	     students.setMarks1(marksJson);
 	     students.setName(name);
 	     students.setDepartment(department);
 	     students.setDivision(division);
 	     students.setPhoto("/" + photo.getOriginalFilename());
 	     
-	     
+	     FacultyModel faculty = facultyRepo.findByEmail(email);
 	     studentRepo.save(students);
+	     model.addAttribute("faculty", faculty);
 	     model.addAttribute("students", students);
+	     model.addAttribute("marks", marks); 	     
+
 	     return "updateByFaculty";
-	 }
+	}
 	
-	 @PostMapping("/updated")
+	 
+	 @PostMapping("/updated")	
 	 public String updated(@RequestParam("email") String email,
 			 @RequestParam String name , 
 			 @RequestParam String department,
@@ -206,9 +273,16 @@ public class AdminController {
 ////	 }
 	 
 	 @GetMapping("/searchStudents")
-	    public String searchStudents(@RequestParam("searchQuery") String searchQuery, Model model) {
+	    public String searchStudents(@RequestParam("searchQuery") String searchQuery,
+	    		@RequestParam String email,
+	    		Model model) {
 	        List<StudentModel> students = studentRepo.findByNameContainingIgnoreCase(searchQuery);
 	        model.addAttribute("students", students);
+	        
+	        AdminModel admins = adminRepo.findByEmail(email);
+	        model.addAttribute("admins", admins);
+
+	        
 	        return "facultyPage";
 	    }
 	 
@@ -217,7 +291,6 @@ public class AdminController {
 	 public String addStudent(
 	         @RequestParam String name,
 	         @RequestParam String email,
-	         @RequestParam String password,
 	         @RequestParam String department,
 	         @RequestParam String division,
 //	         @RequestParam int rollNumber,
@@ -225,6 +298,8 @@ public class AdminController {
 	         @RequestParam("photo") MultipartFile photo,
 	         @RequestParam String role,
 	         Model model) throws IOException {
+
+	        String generatedPassword = generatePassword();
 
 	     // Process photo upload
 	     Path path = Paths.get("src/main/resources/static/" + photo.getOriginalFilename());
@@ -239,9 +314,9 @@ public class AdminController {
 	     adminModel.setName(name);
 	     adminModel.setEmail(email);
 	     adminModel.setRole(role);
-	     adminModel.setPassword(password);
+	     adminModel.setPassword(generatedPassword);
 	     AdminModel savedAdmin = adminRepo.save(adminModel);
-
+	    
 	     fees=0;
 	     totalMarks = 0;
 	     percentage =0;
@@ -267,7 +342,13 @@ public class AdminController {
 	     student.setAdmin(savedAdmin);
 
 	     studentRepo.save(student);
+	     
 
+	     String emailSubject = "Your Student Portal Password";
+	        String emailText = "Hello " + name + ",\n\nYour password for the student portal is: " + generatedPassword;
+	        emailService.sendEmail(email, emailSubject, emailText);
+	        
+	        
 	     model.addAttribute("successMessage", "Student added successfully!");
 	     return "addDetail";
 	 }
@@ -310,6 +391,8 @@ public class AdminController {
     
     @GetMapping("/login")
     public String login(Model adminModel) {
+    	
+    	
     	return "login";
 		
     }
@@ -330,11 +413,11 @@ public class AdminController {
     		
             model.addAttribute("admins", admin);
             
-            
             if(admin.getRole().equalsIgnoreCase("FACULTY"))
             {
             	List<StudentModel> students = studentRepo.findAll();
             	model.addAttribute("students", students);
+                model.addAttribute("admins", admin);
             	StudentModel sm = new StudentModel();
             	return "facultyPage";  
             }
@@ -353,5 +436,15 @@ public class AdminController {
         	return "login";  
         	
         }	
+    }
+    private String generatePassword() {
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
+        Random random = new Random();
+        StringBuilder password = new StringBuilder(8);
+
+        for (int i = 0; i < 8; i++) {
+            password.append(characters.charAt(random.nextInt(characters.length())));
+        }
+        return password.toString();
     }
 }

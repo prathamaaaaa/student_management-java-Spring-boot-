@@ -5,72 +5,73 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Student</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-   <script>
-    function previewImage(event) {
-        const file = event.target.files[0];
-        const reader = new FileReader();
-        reader.onload = function() {
-            const imgElement = document.getElementById('photoPreview');
-            imgElement.src = reader.result;
-            imgElement.style.display = 'block'; 
-        }
-        if (file) {
-            reader.readAsDataURL(file);
-        }
-    }
-
-    function addSubjectField() {
-        const container = document.getElementById('marksContainer');
-        const div = document.createElement('div');
-        div.classList.add('mt-4'); 
-
-        const label = document.createElement('label');
-        label.textContent = `Marks for Subject ${container.children.length + 1}*`;
-        label.classList.add('block', 'font-bold', 'text-lg');
-        div.appendChild(label);
-
-        const input = document.createElement('input');
-        input.type = 'number';
-        input.id = `marks${container.children.length + 1}`;
-        input.name = `marks${container.children.length + 1}`; // Ensure the name is unique for each input
-        input.placeholder = `Enter marks for subject ${container.children.length + 1}`;
-        input.classList.add('border', 'rounded-lg', 'p-2', 'w-full');
-        input.required = true;
-        div.appendChild(input);
-
-        container.appendChild(div);
-    }
-
-    function collectMarks() {
-        const marks = [];
-        const inputs = document.querySelectorAll('input[id^="marks"]');
-        console.log("Collecting marks from:", inputs); 
-        inputs.forEach(input => {
-            const value = input.value.trim();
-            if (value !== "") {
-                marks.push(parseInt(value, 10)); 
-            } else {
-                console.warn(`Empty mark field skipped: ${input.id}`); 
+    <script>
+        function previewImage(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function() {
+                const imgElement = document.getElementById('photoPreview');
+                imgElement.src = reader.result;
+                imgElement.style.display = 'block'; 
             }
-        });
-        console.log("Collected Marks Array:", marks); 
-        return marks;
-    }
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        const form = document.querySelector('form');
-        form.addEventListener('submit', function(event) {
-            event.preventDefault(); 
-            const marks = collectMarks(); 
-            console.log('Collected Marks:', marks);
-            const marksInput = document.getElementById('marks');
-            marksInput.value = JSON.stringify(marks)
-             form.submit();
+        function addSubjectField() {
+            const container = document.getElementById('marksContainer');
+            const div = document.createElement('div');
+            div.classList.add('mt-4'); 
+
+            const label = document.createElement('label');
+            label.textContent = `Marks for Subject ${container.children.length + 1}*`;
+            label.classList.add('block', 'font-bold', 'text-lg');
+            div.appendChild(label);
+
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.id = `marks${container.children.length + 1}`;
+            input.name = `marks${container.children.length + 1}`; 
+            input.placeholder = `Enter marks for subject ${container.children.length + 1}`;
+            input.classList.add('border', 'rounded-lg', 'p-2', 'w-full');
+            input.required = true;
+            div.appendChild(input);
+
+            container.appendChild(div);
+        }
+
+        function collectMarks() {
+            const marks = [];
+            const inputs = document.querySelectorAll('input[id^="marks"]');
+            console.log("Collecting marks from:", inputs); 
+            inputs.forEach(input => {
+                const value = input.value.trim();
+                if (value !== "") {
+                    marks.push(parseInt(value, 10)); 
+                } else {
+                    console.warn(`Empty mark field skipped: ${input.id}`); 
+                }
+            });
+            console.log("Collected Marks Array:", marks); 
+            return marks;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.querySelector('form');
+            form.addEventListener('submit', function(event) {
+                event.preventDefault(); 
+                const marks = collectMarks(); 
+                console.log('Collected Marks:', marks);
+                const marksInput = document.getElementById('marks');
+                marksInput.value = JSON.stringify(marks)
+                form.submit();
+            });
         });
-    });
-</script>
+    </script>
 </head>
 <body class="bg-gray-200">
+
     <div class="container mx-auto p-8">
         <div class="bg-white shadow-md rounded-lg p-8">
             <h2 class="text-3xl font-bold mb-6">Add Student</h2>
@@ -78,69 +79,61 @@
                 <!-- Name -->
                 <div>
                     <label for="name" class="block font-bold text-lg">Name *</label>
-                    <input type="text"  th:value="${students.name}"  id="name" name="name" class="border rounded-lg p-2 w-full" placeholder="Enter student's name" required>
+                    <input type="text" th:value="${students.name}" id="name" name="name" class="border rounded-lg p-2 w-full" placeholder="Enter student's name" required>
                 </div>
-				
-                <!-- Password -->
-                
-                <!-- Email -->
-                <div>
-                    <input type="email" id="email" th:value="${students.email}"  name="email" class="hidden  border rounded-lg p-2 w-full" placeholder="Enter student's email" required>
-                </div>
+                    <input type="email" th:value="${students.email}" id="email" name="email" class=" hidden border rounded-lg p-2 w-full" placeholder="Enter student's name" >
 
                 <!-- Department -->
                 <div>
                     <label for="department" class="block font-bold text-lg">Department *</label>
-                    <input type="text" id="department" th:value="${students.department}"  name="department" class="border rounded-lg p-2 w-full" placeholder="Enter department" required>
+                    <input type="text" th:value="${students.department}" id="department" name="department" class="border rounded-lg p-2 w-full" placeholder="Enter department" required>
                 </div>
 
                 <!-- Division -->
                 <div>
                     <label for="division" class="block font-bold text-lg">Division *</label>
-                    <select id="division" name="division"  th:value="${students.division}"  class="border rounded-lg p-2 w-full">
+                    <select id="division" name="division" th:value="${students.division}" class="border rounded-lg p-2 w-full">
                         <option value="Div A">Div A</option>
                         <option value="Div B">Div B</option>
                         <option value="Div C">Div C</option>
                     </select>
                 </div>
 
-                <!-- Marks                 <div id="marksContainer">
-    <div th:each="mark : ${student.marks1}">
-        <label for="marks1" class="block font-bold text-lg">Marks for Subject 1*</label>
-        <input type="number" th:value="${mark}" id="marks1" name="marks1" class="border rounded-lg p-2 w-full" placeholder="Enter marks for subject 1">
-    </div>
-</div>-->
-
-                <div class="mt-4">
-                    <button type="button" onclick="addSubjectField()" class="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-700">
-                        Add More Subjects
-                    </button>
-                </div>
-
                 <!-- Photo -->
                 <div>
                     <label for="photo" class="block font-bold text-lg">Upload Photo *</label>
                     <input type="file" id="photo" name="photo" class="border rounded-lg p-2 w-full" accept="image/*" required onchange="previewImage(event)">
-                    <!-- Image preview -->
-                    <img id="photoPreview"  th:src="${students.photo}"  alt="Image Preview" style=" margin-top: 10px; width: 150px; height: 150px; object-fit: cover;">
+                    <img id="photoPreview" th:src="${students.photo}" alt="Image Preview" style=" margin-top: 10px; width: 150px; height: 150px; object-fit: cover;">
                 </div>
 
+                <!-- Role -->
                 <div>
-                    <label for="role" class="block font-bold text-lg">Role *</label>
-                    <select id="role" name="role" class="border rounded-lg p-2 w-full" required>
+                    <label for="role" class="hidden block font-bold text-lg">Role *</label>
+                    <select id="role" name="role" class="hidden border rounded-lg p-2 w-full" required>
                         <option value="USER">User</option>
                     </select>
                 </div>
 
-                <!-- Hidden input to store marks -->
-                <input type="hidden" id="marks" name="marks">
+                <!-- Marks -->
+               <div id="marksContainer">
+				    <th:block th:each="mark, i : ${marks}">
+				        <div class="mt-4">
+				            <label class="block font-bold text-lg" th:text="'Marks for Subject ' + ${i.index + 1} + '*'">Marks for Subject</label>
+				            <input type="number" th:id="'marks' + ${i.index + 1}" th:name="'marks' + ${i.index + 1}" th:value="${mark}" class="border rounded-lg p-2 w-full" required>
+				        </div>
+				    </th:block>
+				</div>
+<!-- Hidden Input for Marks -->
+<input type="hidden" id="marks" name="marks">
 
                 <!-- Submit Button -->
                 <div class="text-center">
                     <button type="submit" class="bg-blue-500 text-white py-2 px-6 rounded-lg hover:bg-blue-700">Submit</button>
                 </div>
             </form>
+            
+            
         </div>
     </div>
 </body>
-</html>
+</html> 
