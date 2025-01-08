@@ -13,6 +13,7 @@ import org.springframework.data.repository.query.Param;
 public interface StudentRepository extends JpaRepository<StudentModel, Integer> {
 	
 	StudentModel findByEmail(String email);
+	StudentModel deleteByEmail(String email);
 //	StudentModel findByRollNumber(int rollNumber);
 //  List<StudentModel> findByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(String name, String email);
     List<StudentModel> findByNameContainingIgnoreCase(String name);

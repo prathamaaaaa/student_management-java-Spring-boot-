@@ -71,11 +71,25 @@
 </script>
 </head>
 <body class="bg-gray-200">
-                <a th:href="@{/StudentProfile?email={email}(email=${students.email})}" class="w-full text-center bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md transition-colors duration-300 mt-4 sm:mt-0 sm:ml-4">profile</a>
 
     <div class="container mx-auto p-8">
         <div class="bg-white shadow-md rounded-lg p-8">
-            <h2 class="text-3xl font-bold mb-6">Update your Profile</h2>
+        
+        <div class=" gap-6">
+    <!-- Centered Heading -->
+    <div class="flex justify-end">
+        <a th:href="@{/StudentProfile?email={email}(email=${students.email})}" class="bg-green-500 hover:bg-green-600 text-white py-2 px-6 rounded-md transition-colors duration-300">Profile</a>
+    </div>
+    <div class="col-span-3 text-center">
+        <h2 class="text-3xl font-bold text-gray-800 mb-6">Update your Profile</h2>
+    </div>
+    
+    <!-- Empty div to balance the grid columns -->
+    <div></div>
+    
+    <!-- Profile link on the right side -->
+</div>
+
             <form action="/updated" method="POST" enctype="multipart/form-data" class="space-y-4">
                 <!-- Name -->
                 <div th:each="students : ${students}" >
@@ -110,7 +124,7 @@
                 <!-- Photo -->
                 <div>
 				    <label for="photo" class="block font-bold text-lg">Upload Photo *</label>
-				    <input type="file" id="photo" name="photo" class="border rounded-lg p-2 w-full" accept="image/*" onchange="previewImage(event)">
+				    <input type="file" id="photo" name="photo" class="border rounded-lg p-2 w-full" accept="students.photo" onchange="previewImage(event)">
 				    <!-- Image preview -->
 				    <img id="photoPreview" th:src="${students.photo}" alt="Image Preview" style="margin-top: 10px; width: 150px; height: 150px; object-fit: cover;">
 				</div>

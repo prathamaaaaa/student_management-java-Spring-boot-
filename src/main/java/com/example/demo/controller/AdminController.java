@@ -80,6 +80,9 @@ public class AdminController {
 	public int totalMarks;
 
 	public int percentage;
+
+
+	private int avg;
     
 	@GetMapping("/Password")
 	 public String Password( Model model) {
@@ -113,6 +116,7 @@ public class AdminController {
 	 @PostMapping("/submitForm")
 	    public String submitForm(@Valid @ModelAttribute("adminModel") AdminModel adminModel,
 	                             BindingResult result,
+	                             @RequestParam String mobileNumber,
 	                             Model model) {
 
 	        if (result.hasErrors()) {
@@ -120,7 +124,7 @@ public class AdminController {
 	            return "register"; 
 	        }
 
-	        adminService.saveAdminData(adminModel);
+	        adminService.saveAdminData(adminModel , mobileNumber);
 
 	        return "redirect:/login"; 
 	    } 
@@ -141,11 +145,11 @@ public class AdminController {
 	 
 	 @GetMapping("/facultyPage")
 	 public String facultyPage(Model model,
-			 @RequestParam String email
-			 ) {
+	         @RequestParam String facultyEmail
+	       ) {
      	List<StudentModel> students = studentRepo.findAll();
-     	AdminModel admin = adminRepo.findByEmail(email);     		
-            model.addAttribute("admins", admin);
+     	AdminModel admins = adminRepo.findByEmail(facultyEmail);     		
+            model.addAttribute("admins", admins);
 	     model.addAttribute("students", students);
 	     return "facultyPage"; 
 	 }
@@ -171,9 +175,23 @@ public class AdminController {
 	 }
 
 	 @GetMapping("/reportCard")
-	 public String reportCard(@RequestParam("email") String email, Model model) {
+	 public String reportCard(@RequestParam("email") String email, Model model) throws JsonMappingException, JsonProcessingException {
 	     StudentModel students = studentRepo.findByEmail(email);
 	     System.out.println(email);
+	     ObjectMapper objectMapper = new ObjectMapper();
+	     List<Integer> marks = objectMapper.readValue(
+	             students.getMarks1(), 
+	             new com.fasterxml.jackson.core.type.TypeReference<List<Integer>>() {}
+	     );
+	     System.out.println("Marks Size: " + marks.size());
+
+	     avg = students.getPercentage();
+	     String pp = avgP(avg);
+	     
+	     
+	     System.out.println("percentage" +pp);
+	     model.addAttribute("marks", marks);
+	     model.addAttribute("pp", pp);
 	     model.addAttribute("students", students);
 	     return "reportCard";
 	 }
@@ -183,38 +201,67 @@ public class AdminController {
 	 public String update(@RequestParam("email") String email, Model model) {
 	     StudentModel students = studentRepo.findByEmail(email);
 	     System.out.println("emial"+email);
+	     String phot =students.getPhoto();
+	     System.out.println("photot"+phot);
+	     
+	     students.setPhoto(phot);
+	     studentRepo.save(students);
 	     model.addAttribute("students", students);
 	     return "update";
 	 }
 	 @GetMapping("/updateByFaculty")
-	 public String updateByFaculty(@RequestParam("email") String email, Model model) throws JsonMappingException, JsonProcessingException {
+	 public String updateByFaculty(
+	         @RequestParam("email") String email, 
+	         @RequestParam("facultyEmail") String facultyEmail, 
+	         Model model) throws JsonMappingException, JsonProcessingException {
+	     
+	     // Fetch student details using studentEmail
 	     StudentModel students = studentRepo.findByEmail(email);
-	     System.out.println("e : "+email);
-	     
-	     
-	     ObjectMapper objectMapper = new ObjectMapper();
-	     List<Integer> marks = objectMapper.readValue(students.getMarks1(), new com.fasterxml.jackson.core.type.TypeReference<List<Integer>>() {});
-	     System.out.println("m : "+marks.size());
+	     System.out.println("Student Email: " + email);
 
-	     model.addAttribute("marks", marks); 	     
+	     // Print faculty email for reference
+	     System.out.println("Faculty Email: " + facultyEmail);
+
+	     // Parse student marks from JSON
+	     ObjectMapper objectMapper = new ObjectMapper();
+	     List<Integer> marks = objectMapper.readValue(
+	             students.getMarks1(), 
+	             new com.fasterxml.jackson.core.type.TypeReference<List<Integer>>() {}
+	     );
+	     System.out.println("Marks Size: " + marks.size());
+
+	     // Add attributes to the model
+	     model.addAttribute("marks", marks);
 	     model.addAttribute("students", students);
-	     
+	     model.addAttribute("facultyEmail", facultyEmail); // Add faculty email to model if needed
+
 	     return "updateByFaculty";
 	 }
+
 	 @PostMapping("/updatedByFaculty")
 	 public String updatedByFaculty(@RequestParam("email") String email,
 			 @RequestParam String name , 
 			 @RequestParam String department,
-	         @RequestParam("photo") MultipartFile photo,
+	         @RequestParam(value = "photo", required = false) MultipartFile photo,  
 	         @RequestParam("marks") String marksJson, // Receive marks as JSON string
 	         @RequestParam String division,
+	         @RequestParam("facultyEmail") String facultyEmail,
 			 Model model) throws IOException {
+		 
 	     StudentModel students = studentRepo.findByEmail(email);
 	     System.out.println(email);
 	     
-	     Path path = Paths.get("src/main/resources/static/" + photo.getOriginalFilename());
-	     Files.createDirectories(path.getParent());
-	     Files.write(path, photo.getBytes()); 
+	     if (photo != null && !photo.isEmpty()) {
+	         Path path = Paths.get("src/main/resources/static/" + photo.getOriginalFilename());
+	         Files.createDirectories(path.getParent());
+	         Files.write(path, photo.getBytes());
+	         
+	         students.setPhoto("/" + photo.getOriginalFilename());
+	         System.out.println("New photo uploaded: " + photo.getOriginalFilename());
+	     } else {
+	         System.out.println("No new photo uploaded. Keeping the existing photo.");
+	     }
+	      
 	     ObjectMapper objectMapper = new ObjectMapper();
 	     List<Integer> marks = objectMapper.readValue(marksJson, new com.fasterxml.jackson.core.type.TypeReference<List<Integer>>() {});
 
@@ -223,44 +270,49 @@ public class AdminController {
 	     students.setName(name);
 	     students.setDepartment(department);
 	     students.setDivision(division);
-	     students.setPhoto("/" + photo.getOriginalFilename());
-	     
-	     FacultyModel faculty = facultyRepo.findByEmail(email);
+	     AdminModel admins = adminRepo.findByEmail(facultyEmail);
+	     FacultyModel faculty = facultyRepo.findByEmail(facultyEmail);
 	     studentRepo.save(students);
 	     model.addAttribute("faculty", faculty);
+	     model.addAttribute("admins", admins);
 	     model.addAttribute("students", students);
 	     model.addAttribute("marks", marks); 	     
 
-	     return "updateByFaculty";
+	     return "redirect:/facultyPage?facultyEmail=" + facultyEmail;
 	}
 	
 	 
-	 @PostMapping("/updated")	
+	 @PostMapping("/updated")    
 	 public String updated(@RequestParam("email") String email,
-			 @RequestParam String name , 
-			 @RequestParam String department,
-	         @RequestParam("photo") MultipartFile photo,
+	         @RequestParam String name , 
+	         @RequestParam String department,
+	         @RequestParam(value = "photo", required = false) MultipartFile photo,  // Make photo optional
 	         @RequestParam String division,
-			 Model model) throws IOException {
+	         Model model) throws IOException {
+	     
 	     StudentModel students = studentRepo.findByEmail(email);
 	     System.out.println(email);
 	     
-	     Path path = Paths.get("src/main/resources/static/" + photo.getOriginalFilename());
-	     Files.createDirectories(path.getParent());
-	     Files.write(path, photo.getBytes()); 
-	     
+	     if (photo != null && !photo.isEmpty()) {
+	         Path path = Paths.get("src/main/resources/static/" + photo.getOriginalFilename());
+	         Files.createDirectories(path.getParent());
+	         Files.write(path, photo.getBytes());
+	         
+	         students.setPhoto("/" + photo.getOriginalFilename());
+	         System.out.println("New photo uploaded: " + photo.getOriginalFilename());
+	     } else {
+	         System.out.println("No new photo uploaded. Keeping the existing photo.");
+	     }
 	     
 	     students.setName(name);
 	     students.setDepartment(department);
 	     students.setDivision(division);
-	     students.setPhoto("/" + photo.getOriginalFilename());
-	     
 	     
 	     studentRepo.save(students);
 	     model.addAttribute("students", students);
 	     return "update";
 	 }
-	 
+ 
 //	 @PostMapping("/updated")
 //	 public String updeted(@RequestParam String name ,   Model model ) {
 //		 
@@ -297,6 +349,7 @@ public class AdminController {
 	         @RequestParam("marks") String marksJson, // Receive marks as JSON string
 	         @RequestParam("photo") MultipartFile photo,
 	         @RequestParam String role,
+	         @RequestParam String facultyEmail, 
 	         Model model) throws IOException {
 
 	        String generatedPassword = generatePassword();
@@ -317,6 +370,7 @@ public class AdminController {
 	     adminModel.setPassword(generatedPassword);
 	     AdminModel savedAdmin = adminRepo.save(adminModel);
 	    
+	     
 	     fees=0;
 	     totalMarks = 0;
 	     percentage =0;
@@ -345,12 +399,26 @@ public class AdminController {
 	     
 
 	     String emailSubject = "Your Student Portal Password";
-	        String emailText = "Hello " + name + ",\n\nYour password for the student portal is: " + generatedPassword;
-	        emailService.sendEmail(email, emailSubject, emailText);
+	     String emailText = "Hello " + name + ",\n\nYour password for the student portal is: " + generatedPassword;
+	     emailService.sendEmail(email, emailSubject, emailText);
 	        
 	        
 	     model.addAttribute("successMessage", "Student added successfully!");
-	     return "addDetail";
+
+	     
+	     return "redirect:/addDetail?email=" + facultyEmail;
+	 
+	 }
+	 
+	 @GetMapping("/delete")
+	 public String delete(Model model ,@RequestParam String facultyEmail,@RequestParam String email ) {
+		 
+		 StudentModel students = studentRepo.findByEmail(email);		 
+		 studentRepo.delete(students);
+		 AdminModel admins = adminRepo.findByEmail(email);
+		 adminRepo.delete(admins);
+		 
+		 return "redirect:/facultyPage?facultyEmail="+facultyEmail;
 	 }
 	 
 	 @PostMapping("/submitData")
@@ -377,17 +445,7 @@ public class AdminController {
 
 
 
-    @GetMapping("/viewAdmins")
-    public String viewAdmins(Model model) {
-    	List<AdminModel> admins = adminRepo.findAll();
-        for (AdminModel adminModel : admins) {
-        	System.out.println(adminModel.getName());
-			
-		}
-        model.addAttribute("admins", admins);
-
-        return "viewAdmins";
-    }
+    
     
     @GetMapping("/login")
     public String login(Model adminModel) {
@@ -398,7 +456,10 @@ public class AdminController {
     }
 
     @GetMapping("/addDetail")
-    public String showAddDetailPage() {
+    public String showAddDetailPage( Model model , @RequestParam String email) {
+    	
+    	AdminModel admins = adminRepo.findByEmail(email);
+    	model.addAttribute("admins", admins);
         return "addDetail"; 
     }
     
@@ -447,4 +508,16 @@ public class AdminController {
         }
         return password.toString();
     }
+    
+    private String avgP(int avg) {
+        if (avg >= 90) return "Your Grade is AA";
+        else if (avg >= 80) return "Your Grade is AB";
+        else if (avg >= 70) return "Your Grade is BB";
+        else if (avg >= 60) return "Your Grade is BC";
+        else if (avg >= 50) return "Your Grade is CC";
+        else if (avg >= 40) return "Your Grade is CD";
+        else if (avg >= 33) return "Your Grade is DD";
+        else return "Sorry you cannot clear the exam..!!";
+    }
+
 }

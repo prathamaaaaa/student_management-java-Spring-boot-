@@ -21,6 +21,7 @@
             <h1 class="text-4xl font-semibold text-white tracking-wide" th:text="${admin.name}"></h1>
             <div class="flex space-x-6">
                 <a th:href="@{/FacultyProfile?email={email}(email=${admin.email})}" class="text-white hover:text-gray-300 transition duration-300">Profile</a>
+                <span>/</span>
                 <a th:href="@{/login}" class="text-white hover:text-gray-300 transition duration-300">Logout</a>
             </div>
         </div>
@@ -43,7 +44,7 @@
                 <input 
                     type="text" 
                     name="searchQuery" 
-                    placeholder="Search by name or email..." 
+                    placeholder="Search by name..." 
                     class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
                     id="searchBar" 
                 />
@@ -66,8 +67,15 @@
     <!-- Students List -->
     <main class="container mx-auto p-6">
         <section class="mb-12">
-            <h2 class="text-4xl text-center font-bold text-blue-600 mb-6">Students List</h2>
-            
+            <div class="flex justify-between">
+            <div></div>
+            <h2 class="text-4xl text-center font-bold text-blue-600 mb-6 mt-6">Students List</h2>
+            <div th:each="admin : ${admins}" class="mb-8">
+            <a th:href="@{/addDetail?email={email}(email=${admin.email})}" class="mt-6 inline-block px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 transition duration-300">
+                Add Student
+            </a>
+            </div>
+            </div>
             <!-- Check if students list is empty or null -->
             <div th:if="${students == null or students.isEmpty()}">
                 <p class="text-red-500 text-3xl text-center">No Students Found</p>
@@ -83,6 +91,8 @@
                         <th class="px-6 py-3 text-left">Photo</th>
                         <th class="px-6 py-3 text-left">Actions</th>
                         <th class="px-6 py-3 text-left">Edit</th>
+                        <th class="px-6 py-3 text-left">Delete</th>
+                        
                     </tr>    
                 </thead>
                 <tbody>
@@ -101,21 +111,22 @@
                                 View Report
                             </a>
                         </td>
-                        <td class="px-6 py-4">
-                            <a 
-                                th:href="@{/updateByFaculty?email={email}(email=${student.email})}" 
-                                class="text-blue-500 hover:text-blue-700 transition duration-200 ease-in-out">
-                                Edit
-                            </a>
-                        </td>
+                        <td th:each="admin : ${admins}"class="px-6 py-4">
+						    <a th:href="@{/updateByFaculty(email=${student.email}, facultyEmail=${admin.email})}" class="text-blue-500 hover:text-blue-700 transition duration-200 ease-in-out">
+						    Edit
+						</a>
+
+						</td>
+                        <td th:each="admin : ${admins}"class="px-6 py-4">
+							<a th:href="@{/delete(email=${student.email}, facultyEmail=${admin.email})}" class="text-blue-500 hover:text-blue-700 transition duration-200 ease-in-out">
+						    Delete
+						</a>
+						</td>
                     </tr>
                 </tbody>
             </table>		
             
             <!-- Add Student Button -->
-            <a th:href="@{/addDetail}" class="mt-6 inline-block px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 transition duration-300">
-                Add Student
-            </a>
             
         </section>
     </main>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,43 +8,42 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-gray-50 text-gray-800">
+<body class="bg-gray-100 text-gray-800">
 
     <div class="container mx-auto p-6">
-        <h1 class="text-3xl font-bold text-center text-blue-600 mb-10">Student Profiles</h1>
-                        <a th:href="@{/login}" class="w-full text-center bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md transition-colors duration-300 mt-4 sm:mt-0 sm:ml-4">logout</a>
+        <!-- Header Section -->
+        <!-- Logout Button -->
 
-		
-        <!-- Student Profile Card -->
-        <div th:each="students : ${students}" class="bg-white shadow-xl rounded-lg max-w-sm mx-auto p-6 mb-8 hover:shadow-2xl transition-shadow duration-300">
+        <!-- Student Profile Cards -->
+<div th:each="students : ${students}" class=" mt-12 bg-white shadow-xl rounded-lg w-[40%] mx-auto p-6 mb-8 hover:shadow-2xl transition-shadow duration-300">
+        <a th:href="@{/login}" class="w-full text-center bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 mt-4 sm:mt-0 sm:ml-4">Logout</a>
+        <div></div>
 
             <!-- Student Photo and Info -->
             <div class="flex flex-col items-center mb-6">
+        <h1 class="text-3xl font-bold text-center text-blue-900 mb-10">Student Profile</h1>
                 <!-- Student Photo -->
                 <img th:src="@{${students.photo}}" alt="Student Photo" class="rounded-full w-32 h-32 object-cover mb-4 border-4 border-blue-500 shadow-lg">
-                
+
                 <!-- Student Name -->
                 <h2 class="text-2xl font-semibold text-gray-800 mb-2" th:text="${students.name}"></h2>
-                
-                
             </div>
 
             <!-- Student Details -->
-            <!-- Student Department -->
             <div class="text-gray-700 mb-6">
-            <div class="flex justify-between mb-2">
+                <div class="flex justify-between mb-2">
                     <span class="font-bold">Email:</span>
                     <span th:text="${students.email}"></span>
                 </div>
                 <div class="flex justify-between mb-2">
-                    <span class="font-bold">Department :</span>
+                    <span class="font-bold">Department:</span>
                     <span th:text="${students.department}"></span>
                 </div>
                 <div class="flex justify-between mb-2">
-                    <span class="font-bold">Division :</span>
+                    <span class="font-bold">Division:</span>
                     <span th:text="${students.division}"></span>
                 </div>
-                
+
                 <div class="flex justify-between mb-4">
                     <span class="font-bold">Fees:</span>
                     <span th:text="${students.fees}"></span>
@@ -51,16 +51,20 @@
             </div>
 
             <!-- Action Links -->
-            <div class="flex justify-between">
-                <a th:href="@{/payFees?email={email}(email=${students.email})}" class="w-full text-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors duration-300">Pay Fees</a>
-                <a th:href="@{/reportCard?email={email}(email=${students.email})}" class="w-full text-center bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md transition-colors duration-300 mt-4 sm:mt-0 sm:ml-4">View Report</a>
-                <a th:href="@{/update?email={email}(email=${students.email})}" class="w-full text-center bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md transition-colors duration-300 mt-4 sm:mt-0 sm:ml-4">update</a>
-                
+            <div class="flex justify-between gap-4">
+                <a th:href="@{/payFees?email={email}(email=${students.email})}" class="w-full text-center bg-blue-400 hover:bg-blue-600 text-black px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300">Pay Fees</a>
+                <a th:href="@{/reportCard?email={email}(email=${students.email})}" class="w-full text-center bg-blue-400 hover:bg-blue-600 text-black px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300">View Report</a>
+                <a th:href="@{/update?email={email}(email=${students.email})}" class="w-full text-center bg-blue-400 hover:bg-blue-600 text-black px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300">Update Profile</a>
             </div>
-            
+
+            <!-- Update Link -->
+            <div class="mt-4 text-center">
+            </div>
         </div>
 
     </div>
-	
+
 </body>
+
 </html>
+	
