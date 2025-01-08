@@ -27,6 +27,7 @@ public class FacultyModel {
     private String name;
     private String email;
     private String password;
+    private String mobileNumber;
 
     @ManyToOne
     @JoinColumn(name = "admin_id")

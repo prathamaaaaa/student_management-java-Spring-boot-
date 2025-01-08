@@ -37,11 +37,14 @@
         </div>
     </div>
 
-    
+    <div class="mb-4">
+        <label for="mobileNumber" class="block text-xl font-medium text-gray-700">Mobile Number:</label>
+        <input type="text" id="mobileNumber" name="mobileNumber" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+    </div>
 
     <div class="mb-4">
-        <label for="role" class="block text-xl font-medium text-gray-700">Choose Role:</label>
-        <select th:field="*{role}" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-xl" required>
+        <label for="role" class="hidden block text-xl font-medium text-gray-700">Choose Role:</label>
+        <select th:field="*{role}" class="hidden w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-xl" required>
             <option value="FACULTY">Faculty</option>
         </select>
         <div class="text-red-500 text-sm">
