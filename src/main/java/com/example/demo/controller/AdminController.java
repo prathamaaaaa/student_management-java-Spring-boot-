@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 import java.io.IOException;
+
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
@@ -89,6 +90,29 @@ public class AdminController {
 		
 	     return "Password";
 	 }
+	 @GetMapping("/reportCard")
+	 public String reportCard(@RequestParam("email") String email, Model model,@RequestParam String facultyEmail) throws JsonMappingException, JsonProcessingException {
+	     StudentModel students = studentRepo.findByEmail(email);
+	     System.out.println(email);
+	     ObjectMapper objectMapper = new ObjectMapper();
+	     List<Integer> marks = objectMapper.readValue(
+	             students.getMarks1(), 
+	             new com.fasterxml.jackson.core.type.TypeReference<List<Integer>>() {}
+	     );
+	     System.out.println("Marks Size: " + marks.size());
+
+	     avg = students.getPercentage();
+	     String pp = avgP(avg);
+	     
+	     AdminModel admins = adminRepo.findByEmail(facultyEmail);
+	     System.out.println("percentage" +pp);
+	     model.addAttribute("marks", marks);
+	     model.addAttribute("pp", pp);
+	     model.addAttribute("students", students);
+	     model.addAttribute("admins",admins);
+	     return "reportCard";
+	 }
+
 	
 	@PostMapping("/forgot")
 	 public String forgot( Model model,
@@ -174,27 +198,7 @@ public class AdminController {
 	     return "payFees";
 	 }
 
-	 @GetMapping("/reportCard")
-	 public String reportCard(@RequestParam("email") String email, Model model) throws JsonMappingException, JsonProcessingException {
-	     StudentModel students = studentRepo.findByEmail(email);
-	     System.out.println(email);
-	     ObjectMapper objectMapper = new ObjectMapper();
-	     List<Integer> marks = objectMapper.readValue(
-	             students.getMarks1(), 
-	             new com.fasterxml.jackson.core.type.TypeReference<List<Integer>>() {}
-	     );
-	     System.out.println("Marks Size: " + marks.size());
 
-	     avg = students.getPercentage();
-	     String pp = avgP(avg);
-	     
-	     
-	     System.out.println("percentage" +pp);
-	     model.addAttribute("marks", marks);
-	     model.addAttribute("pp", pp);
-	     model.addAttribute("students", students);
-	     return "reportCard";
-	 }
 	 
 	 
 	 @GetMapping("/update")

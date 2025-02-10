@@ -57,4 +57,61 @@ public class AdminModel {
 	@OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<FacultyModel> facultyMembers;
 
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+
+	public List<StudentModel> getStudents() {
+		return students;
+	}
+
+	public void setStudents(List<StudentModel> students) {
+		this.students = students;
+	}
+
+	public List<FacultyModel> getFacultyMembers() {
+		return facultyMembers;
+	}
+
+	public void setFacultyMembers(List<FacultyModel> facultyMembers) {
+		this.facultyMembers = facultyMembers;
+	}
+	
+
 }

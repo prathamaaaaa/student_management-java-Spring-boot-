@@ -117,11 +117,19 @@
 </head>
 <body>
     <div class="container">
-        <div class="action-link">
-            <a th:href="@{/StudentProfile?email={email}(email=${students.email})}">View Profile</a>
-        </div>
-        <h1>Student Report Card</h1>
+        <div th:each="admin : ${admins}" class="flex justify-end">
+  <a 
+    th:href="@{/facultyPage?facultyEmail={facultyEmail}(facultyEmail=${admin.email})}" 
+    class="text-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors duration-300 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
+  >
+    Home
+  </a>
+</div>
 
+       
+        <h1>Student Report Card</h1>
+		
+                
         <table>
             <tbody>
                 <tr>

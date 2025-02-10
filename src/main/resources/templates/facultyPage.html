@@ -104,9 +104,9 @@
                         <td class="px-6 py-4">
                             <img th:src="@{${student.photo}}" alt="Student Photo" class="w-16 h-16 object-cover rounded-full shadow-md" />
                         </td>
-                        <td class="px-6 py-4">
+                        <td class="px-6 py-4" th:each="admin : ${admins}">
                             <a 
-                                th:href="@{/reportCard?email={email}(email=${student.email})}" 
+                                th:href="@{/reportCard(email=${student.email}, facultyEmail=${admin.email})}" 
                                 class="text-blue-500 hover:text-blue-700 transition duration-200 ease-in-out">
                                 View Report
                             </a>
