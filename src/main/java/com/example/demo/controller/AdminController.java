@@ -455,9 +455,14 @@ public class AdminController {
     @GetMapping("/login")
     public String login(Model adminModel) {
     	
-    	
+    	System.out.println("loginr");
     	return "login";
 		
+    }
+    @GetMapping("/StudentProfiles")
+    public String login() {
+    	System.out.println("dyofjhj");
+    	return "StudentProfiles";
     }
 
     @GetMapping("/addDetail")
