@@ -151,6 +151,13 @@
                 <input type="email" id="facultyEmail" name="facultyEmail" th:value="${admin.email}" class="hidden border rounded-lg p-2 w-full" >
                 
                 </div>
+                
+                <div th:each="faculty : ${faculty}">
+                <input type="id" id="id" name="facultyEmail" th:value="${faculty.id}" class="hidden border rounded-lg p-2 w-full" >
+                
+                </div>
+                
+                
 
                 <!-- Submit Button -->
                 <div class="text-center">

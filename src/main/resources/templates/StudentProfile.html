@@ -62,6 +62,13 @@
             </div>
         </div>
 
+ <div th:each="students : ${students}">
+			 
+			<a th:href="@{/StudentsChat?email={email}(email=${students.email})}">
+			    <button>Group Chat</button>
+			</a>
+ 
+</div>
     </div>
 
 </body>

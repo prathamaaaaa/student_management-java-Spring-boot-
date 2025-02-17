@@ -12,6 +12,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
@@ -53,6 +54,18 @@ public class StudentModel {
 
     @ManyToOne 
     private AdminModel admin;
+    
+    @ManyToOne
+    @JoinColumn(name = "faculty_id")
+    private FacultyModel faculty;
+
+	public FacultyModel getFaculty() {
+		return faculty;
+	}
+
+	public void setFaculty(FacultyModel faculty) {
+		this.faculty = faculty;
+	}
 
 	public int getId() {
 		return id;

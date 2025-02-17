@@ -1,11 +1,15 @@
 package com.example.demo.model;
 
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -32,6 +36,19 @@ public class FacultyModel {
     @ManyToOne
     @JoinColumn(name = "admin_id")
     private AdminModel admin;
+    
+	@OneToMany(mappedBy = "faculty", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<StudentModel> students;
+
+
+
+	public List<StudentModel> getStudents() {
+		return students;
+	}
+
+	public void setStudents(List<StudentModel> students) {
+		this.students = students;
+	}
 
 	public int getId() {
 		return id;

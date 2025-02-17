@@ -127,7 +127,13 @@
             </table>		
             
             <!-- Add Student Button -->
-            
+			 <div th:each="admin : ${admins}">
+			 
+			<a th:href="@{/FacultyChat?email={email}(email=${admin.email})}">
+			    <button>Group Chat</button>
+			</a>
+ 
+</div>
         </section>
     </main>
 

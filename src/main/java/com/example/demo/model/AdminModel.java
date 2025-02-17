@@ -23,7 +23,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -39,7 +38,6 @@ public class AdminModel {
 	@NotBlank(message = "Name is required.")
     private String name;
 	
-
     @NotBlank(message = "Email is required.")
     @Email(message = "Email should be valid.")
     private String email;
@@ -51,8 +49,8 @@ public class AdminModel {
     @NotBlank(message = "Role is required.")
     private String role;
 
-   @OneToMany(mappedBy = "admin")
-   private List<StudentModel> students;
+    @OneToMany(mappedBy = "admin")
+    private List<StudentModel> students;
 	   
 	@OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<FacultyModel> facultyMembers;
@@ -113,5 +111,4 @@ public class AdminModel {
 		this.facultyMembers = facultyMembers;
 	}
 	
-
 }
