@@ -8,65 +8,86 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-blue-100 flex items-center justify-center min-h-screen">
-    <div class="w-3/4 md:w-1/2 bg-white p-6 rounded-lg shadow-lg">
-        <h1 class="text-xl font-bold mb-4 text-center">Faculty Chat</h1>
-        <div id="chat-messages" class="h-60 overflow-y-scroll border p-3 bg-gray-100 rounded-lg">
-        </div>
-        <div class=" grid grid-cols-2">
-        	<input type="text" id="message" class="w-3/4 p-2 border rounded mt-3" placeholder="Type a message">
-        	<div class="justify-self-end">
-        		<button onclick="sendMessage()" class="w-1/4 m-2  p-2 bg-green-500 text-white rounded hover:bg-green-600">Send</button>
-        		<button onclick="" class="w-1/4 m-2   p-2 bg-red-500 text-white rounded hover:bg-red-600">Clear Chat</button>
-        	
-        
-        	</div>
-        </div>
-    	    
-        </div>
+<div class="w-3/4 md:w-1/2 bg-white p-6 rounded-lg shadow-lg">
+    <h1 class="text-2xl font-bold mb-4 text-center text-blue-700">Faculty Chat</h1>
 
-    <div th:each="admin : ${admin}" class="hidden">
-        <h1 th:text="${admin.name}" id="name"></h1>
+    <!-- Chat Messages -->
+    <div id="chat-messages" class="h-60 overflow-y-scroll border p-3 bg-gray-100 rounded-lg">
     </div>
 
-    <script>
-        var socket = new SockJS('/chat-websocket');
-        var stompClient = Stomp.over(socket);
-        var chatBox = document.getElementById("chat-messages");
+    <!-- Chat Input -->
+    <div class="flex items-center mt-4">
+        <input type="text" id="message" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+               placeholder="Type a message..." onkeypress="handleKeyPress(event)">
+        <button onclick="sendMessage()"
+                class="ml-2 p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">
+            Send
+        </button>
+        <button onclick="clearChat()"
+                class="ml-2 p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition">
+            Clear Chat
+        </button>
+    </div>
+</div>
 
-        function loadMessages() {
+<!-- Hidden Admin Name -->
+<div th:each="admin : ${admin}" class="hidden">
+    <h1 th:text="${admin.name}" id="name"></h1>
+</div>
+
+<script>
+    var socket = new SockJS('/chat-websocket');
+    var stompClient = Stomp.over(socket);
+    var chatBox = document.getElementById("chat-messages");
+
+    function loadMessages() {
+        var messages = JSON.parse(localStorage.getItem("chatMessages")) || [];
+        messages.forEach(msg => addMessageToUI(msg.sender, msg.content));
+    }
+
+    function addMessageToUI(sender, content) {
+        chatBox.innerHTML += `<p class="p-2 bg-white shadow-sm rounded my-1"><b>${sender}:</b> ${content}</p>`;
+        chatBox.scrollTop = chatBox.scrollHeight; // Auto-scroll
+    }
+
+    stompClient.connect({}, function(frame) {
+        stompClient.subscribe('/topic/messages', function(message) {
+            var msg = JSON.parse(message.body);
+            addMessageToUI(msg.sender, msg.content);
+
             var messages = JSON.parse(localStorage.getItem("chatMessages")) || [];
-            messages.forEach(msg => {
-                chatBox.innerHTML += `<p><b>${msg.sender}:</b> ${msg.content}</p>`;
-            });
-        }
-
-        stompClient.connect({}, function(frame) {
-            stompClient.subscribe('/topic/messages', function(message) {
-                var msg = JSON.parse(message.body);
-                chatBox.innerHTML += `<p><b>${msg.sender}:</b> ${msg.content}</p>`;
-                
-                var messages = JSON.parse(localStorage.getItem("chatMessages")) || [];
-                messages.push(msg);
-                localStorage.setItem("chatMessages", JSON.stringify(messages));
-            });
+            messages.push(msg);
+            localStorage.setItem("chatMessages", JSON.stringify(messages));
         });
+    });
 
-        function sendMessage() {
-            var messageContent = document.getElementById("message").value;
-            var nameElement = document.getElementById("name");
-            var name = nameElement ? nameElement.textContent : "Faculty";
+    function sendMessage() {
+        var messageContent = document.getElementById("message").value.trim();
+        var nameElement = document.getElementById("name");
+        var name = nameElement ? nameElement.textContent : "Faculty";
 
-            if (messageContent.trim() !== "") {
-                stompClient.send("/app/sendMessage", {}, JSON.stringify({
-                    sender: name,
-                    content: messageContent,
-                    recipient: "Student"
-                }));
-                document.getElementById("message").value = "";
-            }
+        if (messageContent !== "") {
+            stompClient.send("/app/sendMessage", {}, JSON.stringify({
+                sender: name,
+                content: messageContent,
+                recipient: "Student"
+            }));
+            document.getElementById("message").value = "";
         }
+    }
 
-        document.addEventListener("DOMContentLoaded", loadMessages);
-    </script>
+    function clearChat() {
+        chatBox.innerHTML = ""; // Clear UI
+        localStorage.removeItem("chatMessages"); // Clear localStorage
+    }
+
+    function handleKeyPress(event) {
+        if (event.key === "Enter") {
+            sendMessage();
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", loadMessages);
+</script>
 </body>
 </html>

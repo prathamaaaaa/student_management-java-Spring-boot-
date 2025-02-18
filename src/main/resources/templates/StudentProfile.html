@@ -69,8 +69,14 @@
 			</a>
  
 </div>
-    </div>
 
+        <div th:each="students : ${students}">
+
+            <a th:href="@{/StuedentFacultyChat(sender=${students.name}, reciever='Sangani Parthama Nareshbhai')}">
+                <button> Chat</button>
+            </a>
+
+        </div>
 </body>
 
 </html>

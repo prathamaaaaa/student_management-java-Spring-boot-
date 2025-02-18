@@ -86,14 +86,11 @@ private adminValidation adminValidation;
 	         @RequestParam("facultyEmail") String facultyEmail, 
 	         Model model) throws JsonMappingException, JsonProcessingException {
 	     
-	     // Fetch student details using studentEmail
 	     StudentModel students = studentRepo.findByEmail(email);
 	     System.out.println("Student Email: " + email);
 
-	     // Print faculty email for reference
 	     System.out.println("Faculty Email: " + facultyEmail);
 
-	     // Parse student marks from JSON
 	     ObjectMapper objectMapper = new ObjectMapper();
 	     List<Integer> marks = objectMapper.readValue(
 	             students.getMarks1(), 
