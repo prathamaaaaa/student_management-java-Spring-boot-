@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Students List</title>
+</head>
+<script>
+	
+	function pay() {
+		
+		const fee = document.getElementById('fees').value;
+		console.log(fee);
+		
+	}
+</script>
+<body>
+    <h1>student profile</h1>
+<form action="/submitData" method="post">
+        <tr th:each="student : ${students}">
+
+    <input type="hidden" name="studentEmail" th:value="${student.email}">
+    <div>
+        <label for="fees" class="block font-bold text-lg">Enter Fees*</label>
+        <input type="number" id="fees" name="fees" class="border rounded-lg p-2 w-full" placeholder="Enter fees" required>
+        <button type="submit" onclick="pay()">Pay</button>
+    </div>
+</form>
+
+
+    <table border="1">	
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Department</th>
+            <th>Photo</th>
+            <th>fees</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="student : ${students}">
+        
+            <td th:text="${student.name}"></td>
+            <td th:text="${student.email}"></td>
+            <td th:text="${student.department}"></td>
+            
+            <td>
+    			<img th:src="@{${student.photo}}" alt="Student Photo" style="height: 100px; width: 100px "/>
+			</td>
+                <td th:text="${student.fees}"></td>
+<td><a th:href="@{/StudentProfile?paramName={email}(email=${student.email})}">Go to Target Page</a></td>
+        </tr>
+        
+    </tbody>
+</table>
+
+
+</body>
+</html>

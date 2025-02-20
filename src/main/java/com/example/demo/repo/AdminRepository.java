@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface AdminRepository extends JpaRepository<AdminModel, Integer> {
 
 	AdminModel findByEmail(String email);
-
+AdminModel findByName(String name);
     
 }

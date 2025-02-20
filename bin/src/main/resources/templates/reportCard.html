@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Report Card</title>
+        <script src="https://printjs-4de6.kxcdn.com/print.min.js"></script>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f7f7f7;
+        }
+        .container {
+            width: 600px;
+            max-width: 900px;
+            padding: 30px;
+            background-color: #fff;
+			box-shadow: rgba(0, 0, 0, 0.3) 0px 5px 10px;
+            border-radius: 10px;
+            margin: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #444;
+            font-size: 2em;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+            font-size: 1em;
+        }
+        th {
+            background-color: #f1f1f1;
+            color: #333;
+        }
+        td {
+            background-color: #fafafa;
+        }
+        td img {
+            height: 200px;
+            width: 200px;
+            margin: 0 auto;
+            display: block;
+            border-radius: 20px;
+        }
+        .marks-list li {
+            list-style-type: none;
+            margin-bottom: 5px;
+        }
+        .action-link a {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+        }
+        .action-link a:hover {
+            text-decoration: underline;
+        }
+        .action-link {
+            display: inline-block;
+            margin-top: 15px;
+        }
+        .highlight {
+            font-weight: bold;
+            color: #333;
+        }
+        .red {
+            color: red;
+            font-size: 1.2em;
+           	font-weight: bold;
+        }
+        .green {
+            color: green;
+            font-size: 1.2em;
+           	font-weight: bold;
+            
+        }
+        .details-label {
+            font-size: 1.2em;
+            color: #333;
+            font-weight: bold;
+        }
+ #printBtn {
+            color: white;
+            margin-top: 20px;
+            background-color: #007bff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            display: inline-block;
+            border: none;
+        }
+         #printBtn:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div th:each="admin : ${admins}" class="flex justify-end">
+  <a 
+    th:href="@{/facultyPage?facultyEmail={facultyEmail}(facultyEmail=${admin.email})}" 
+    class="text-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors duration-300 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
+  >
+    Home
+  </a>
+</div>
+
+       
+        <h1>Student Report Card</h1>
+		
+                
+        <table>
+            <tbody>
+                <tr>
+                    <td><strong>Name : </strong><span th:text="${students.name}"></span></td>
+                    <td rowspan="4"><img th:src="@{${students.photo}}" alt="Student Photo" /></td>
+                </tr>
+                <tr>
+                    <td><strong>Email :  </strong><span th:text="${students.email}"></span></td>
+                </tr>
+                <tr>
+                    <td><strong>Department :  </strong><span th:text="${students.department}"></span></td>
+                </tr>
+                <tr>
+                    <td><strong>Division :  </strong><span th:text="${students.division}"></span></td>
+                </tr>
+                <tr th:each="mark, iterStat : ${marks}">
+                    <td colspan="2">
+                        <span th:text="'Subject ' + (${iterStat.index + 1}) + ' :  ' +  ${mark}"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>Total Marks</strong></td>
+                    <td th:text="${students.totalMarks}"></td>
+                </tr>
+                <tr>
+                    <td><strong>Percentage</strong></td>
+                    <td th:text="${students.percentage + '%'}"></td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="text-align: center;">
+					    <span class="details-label"
+					    th:class="${students.percentage < 33 ? 'red' : 'green'}"
+					     th:text="${pp}">Details</span>
+					</td>
+
+                </tr>
+            </tbody>
+        </table>
+        
+         <button id="printBtn">Print</button>
+    </div>
+     <script>
+      document.getElementById("printBtn").addEventListener("click", function () {
+        window.print();
+      });
+    </script>
+</body>
+</html>

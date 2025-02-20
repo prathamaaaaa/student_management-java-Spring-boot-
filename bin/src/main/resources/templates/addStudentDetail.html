@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<div class=" bg-gray-300  col-auto flex justify-center  pt-24 pb-24 ">
+        <div class="all  shadow-2xl  border rounded-lg border-blue-800 p-24 ">
+            <h1 class="pb-16 pt-9 font-serif font-bold text-6xl">
+                Add Student Details
+            </h1>
+            <div class="container1  ">
+                <form class="font-sans  md:font-serif grid gap-12  " onsubmit="saveData(event)">
+                    <div class="one grid grid-cols-2">
+                        <label for="name" class="grid col-start-1 font-bold pb-3  text-3xl">Enter Name * :    </label>
+                        <input type="text" id="name" name="name"class=" border border-blue-900   text-2xl" placeholder=" Your Name..">
+                        
+                    </div>
+                    
+                    <div class="grid grid-cols-2">
+                        
+                        <label class="grid col-start-1 font-bold pb-3 text-3xl" for="number">Enter Roll Number * : </label>
+                        <input type="number" name="number"class=" border border-blue-900 text-2xl" id="Addnumber" placeholder=" Roll Number..">
+                    </div>
+                    
+                    <div class="grid grid-cols-2">
+
+                        <label class=" font-bold pb-3 text-3xl" for="number">Upload Photo : </label>
+                        <div id="imagePreview" class="mt-4">
+                            <input type="file" class="  text-1xl" id="myFile" name="filename" onchange="previewImage()">
+                            <img id="uploadedImage" src="" alt="Uploaded Image" class="hidden w-48 h-48 mt-5 object-cover mx-auto">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2">
+                        
+                        <label class="grid-item font-bold text-3xl" for="department">Enter Department * : </label>
+                        <input  class=" text-2xl border border-blue-900" type="text" name="department" id="department" placeholder=" Department..">
+                    </div>
+                    <div class="grid grid-cols-2">
+                        
+                        <label class="justify-start  font-bold text-3xl" for="division">Choose  Division : </label>
+                        <select class=" pl-6 pr-6 pt-2 pb-2 border border-blue-900 text-2xl" name="division" id="division">  
+                            <option>Div A</option>  
+                            <option>Div B</option>  
+                            <option>Div C</option>  
+                            
+                        </select> 
+                    </div>
+                    <div class="flex justify-end items-center">
+                    </div>
+                    <div id="marksDiv" class="grid grid-cols-1 gap-5">
+                        <div class="grid grid-cols-3 gap-4" id="inputMarkFiled1">
+                            <label class="grid-item font-bold text-3xl" for="marksSubject1">Marks of Subject 1 *
+                                :</label>
+                                <input class="border border-blue-900 text-2xl w-[50%]" type="number" name="marksSubject1"
+                                id="marksSubject1" width="10px">
+                                <button
+                                    class="text-xl text-white bg-blue-700 border border-blue-900 pl-4 pr-4 pt-1 pb-1 rounded hover:bg-blue-900 ml-5"
+                                    onclick="addMore(event)" type="button" style="width: 180px;" class="more-button">More</button>
+                            </div>
+                    </div>
+
+                    <div class="finalSubmit grid grid-cols-1">
+                        <input id="submit"
+                            class="text-2xl  text-white bg-blue-700 border border-blue-900 pl-6 pr-6 pt-4 pb-4  rounded hover:bg-blue-900"
+                            type="submit" id="submit">
+
+                    </div>
+                </form>
+                    
+                </div>
+            </div>
+        </div>
+    </body>
+
+</body>
+</html>

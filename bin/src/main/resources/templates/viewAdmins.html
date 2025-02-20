@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin List</title>
+</head>
+<body>
+    <h1>Admin List</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Mobile Number</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="admin : ${admins}">
+                <td th:text="${admin.name}"></td>
+                <td th:text="${admin.mobileNumber}"></td>
+                <td th:text="${admin.email}"></td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

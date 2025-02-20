@@ -1,122 +1,120 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student-Faculty Chat</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <title>Private Chat</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.0/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+		var socket = new SockJS('/ws');
+		var	stompClient = Stomp.over(socket);
+
+		function connect() {
+		    var senderEmail = document.getElementById("senderEmail").value.trim();
+			var receiverEmail = document.getElementById("receiverEmail").value.trim();
+
+		    if (!senderEmail) {
+		        alert("Please enter your email to connect.");
+		        return;
+		    }
+
+		 
+
+		    stompClient.connect({}, function (frame) {
+		        console.log('Connected: ' + frame);
+
+		        // Subscribe to private messages for this user
+		        stompClient.subscribe(`/user/${senderEmail}/queue/messages`, function (message) {
+		            let msg = JSON.parse(message.body);
+		            console.log("Received:", msg);
+		            showMessage(msg);
+		        });
+
+		        document.getElementById("connectButton").disabled = true;
+		    });
+		}
+
+		function sendMessage() {
+		    var senderEmail = document.getElementById("senderEmail").value.trim();
+		    var receiverEmail = document.getElementById("receiverEmail").value.trim();
+		    var messageContent = document.getElementById("message").value.trim();
+
+		    if (!stompClient || !senderEmail || !receiverEmail) {
+		        alert("Please connect before sending a message.");
+		        return;
+		    }
+
+		    if (messageContent) {
+		        var chatMessage = {
+		            sender: senderEmail,
+		            receiver: receiverEmail,
+		            content: messageContent,
+		            timestamp: new Date().toISOString()
+		        };
+
+		        console.log("Sending Message:", chatMessage);
+		        stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
+			//	stompClient.publish({
+				//       destination: "/app/private-message",
+				  //     body: JSON.stringify({'name': $("#name").val()})
+			//	   });
+		        // Show the sent message instantly for sender
+		        showMessage(chatMessage);
+		        document.getElementById("message").value = "";
+		    }
+		}
+
+		function showMessage(message) {
+		    var senderEmail = document.getElementById("senderEmail").value.trim();
+		    var messageArea = document.getElementById("messageArea");
+
+		    var messageContainer = document.createElement("div");
+		    messageContainer.classList.add("flex", "items-center", "space-x-2", "p-2", "rounded-lg", "my-2", "max-w-md", "w-full");
+
+		    var profileIcon = document.createElement("div");
+		    profileIcon.classList.add("w-8", "h-8", "rounded-full", "bg-gray-500", "flex", "items-center", "justify-center", "text-white", "font-bold");
+		    profileIcon.textContent = message.sender.charAt(0).toUpperCase();
+
+		    var messageElement = document.createElement("div");
+		    messageElement.classList.add("px-4", "py-2", "rounded-lg", "shadow-sm");
+
+		    if (message.sender === senderEmail) {
+		        messageContainer.classList.add("justify-end");
+		        messageElement.classList.add("bg-blue-500", "text-white", "ml-auto", "rounded-br-none");
+		    } else {
+		        messageContainer.classList.add("justify-start");
+		        messageElement.classList.add("bg-gray-300", "rounded-bl-none");
+		    }
+
+		    messageElement.innerHTML = `<span class="font-semibold">${message.sender}:</span> ${message.content}`;
+		    messageContainer.appendChild(profileIcon);
+		    messageContainer.appendChild(messageElement);
+		    messageArea.appendChild(messageContainer);
+		    messageArea.scrollTop = messageArea.scrollHeight;
+		}
+
+    </script>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+<body class="bg-gradient-to-br from-blue-500 to-purple-600 min-h-screen flex items-center justify-center">
+    <div class="max-w-2xl w-full bg-white p-6 shadow-lg rounded-lg">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">Private Chat</h2>
 
-<div class="max-w-3xl w-full bg-white shadow-lg rounded-lg p-6">
-    <h2 class="text-2xl font-bold text-center text-blue-600 mb-4">Student - Faculty Private Chat</h2>
+        <div class="flex space-x-2 mb-4">
+            <input type="text" id="senderEmail" th:value="${sender}" class="flex-1 border p-3 rounded-lg" placeholder="Enter your email">
+            <input type="text" id="receiverEmail" th:value="${reciever}" class="flex-1 border p-3 rounded-lg" placeholder="Enter receiver's email">
+            <button id="connectButton" onclick="connect()" class="bg-green-500 text-white px-4 py-3 rounded-lg hover:bg-green-600 transition">Connect</button>
+        </div>
 
-    <!-- Student Info -->
-    <div class="bg-blue-50 p-4 rounded-lg mb-4">
-        <h3 class="text-xl font-semibold text-blue-700">Student</h3>
-        <div th:each="admin : ${admin}" class="p-2 bg-white shadow-md rounded-lg mt-2">
-            <h1 class="text-lg font-medium text-gray-800" th:value="${sender}" id="studentName"></h1>
+        <div id="messageArea" class="h-80 overflow-y-auto bg-gray-100 p-4 border rounded-lg shadow-inner"></div>
+
+        <div class="flex mt-4 space-x-2">
+            <input type="text" id="message" class="flex-1 border p-3 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Type a message...">
+			
+            <button onclick="sendMessage()" class="bg-blue-500 text-white px-4 py-3 rounded-lg hover:bg-blue-600 transition">Send</button>
         </div>
     </div>
-
-    <!-- Faculty Info -->
-    <div class="bg-green-50 p-4 rounded-lg">
-        <h3 class="text-xl font-semibold text-green-700">Faculty</h3>
-        <div th:each="adminf : ${adminf}" class="p-2 bg-white shadow-md rounded-lg mt-2">
-            <h1 class="text-lg font-medium text-gray-800" th:value="${reciever}" id="facultyName"></h1>
-        </div>
-    </div>
-
-    <!-- Chat Box -->
-    <div id="chat-box" class="h-60 overflow-y-scroll border p-3 bg-gray-100 rounded-lg mt-4"></div>
-
-    <!-- Chat Input -->
-    <div class="flex items-center mt-4">
-        <input type="text" id="messageInput" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-               placeholder="Type a message..." onkeypress="handleKeyPress(event)">
-        <button onclick="sendMessage()"
-                class="ml-2 p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">
-            Send
-        </button>
-    </div>
-</div>
-
-<script>
-    var socket = new SockJS('/chat-websocket');
-    var stompClient = Stomp.over(socket);
-    var chatBox;
-
-    document.addEventListener("DOMContentLoaded", function () {
-        chatBox = document.getElementById("chat-box"); // Ensure chat-box exists
-
-        var studentName = document.getElementById("studentName")?.textContent.trim();
-        var facultyName = document.getElementById("facultyName")?.textContent.trim();
-
-        console.log("Student:", studentName);
-        console.log("Faculty:", facultyName);
-
-        stompClient.connect({}, function (frame) {
-            console.log("Connected: " + frame);
-
-            // Subscribe user to their own queue
-            let userQueue = `topic/user/${studentName}/queue/messages`;
-            stompClient.subscribe(userQueue, function (message) {
-                console.log("Received Message: ", message.body);
-                var msg = JSON.parse(message.body);
-                addMessageToUI(msg.sender, msg.content);
-            });
-
-            let facultyQueue = `/user/${facultyName}/queue/messages`;
-            stompClient.subscribe(facultyQueue, function (message) {
-                console.log("Received Message: ", message.body);
-                var msg = JSON.parse(message.body);
-                addMessageToUI(msg.sender, msg.content);
-            });
-        });
-
-        function addMessageToUI(sender, content) {
-            if (!chatBox) return; // Ensure chatBox exists
-
-            let newMessage = document.createElement("div");
-            newMessage.classList.add("p-2", "bg-white", "shadow-sm", "rounded", "my-1", "border");
-
-            if (sender === studentName) {
-                newMessage.classList.add("bg-blue-100", "text-right"); // Right align for sender
-            } else {
-                newMessage.classList.add("bg-green-100", "text-left"); // Left align for receiver
-            }
-
-            newMessage.innerHTML = `<b class="text-blue-700">${sender}:</b> ${content}`;
-            chatBox.appendChild(newMessage);
-            chatBox.scrollTop = chatBox.scrollHeight; // Auto-scroll
-        }
-
-        window.sendMessage = function () {
-            var messageInput = document.getElementById("messageInput");
-            var messageContent = messageInput.value.trim();
-            if (!messageContent) return; // Prevent empty messages
-
-            console.log("Sending:", { sender: studentName, recipient: facultyName, content: messageContent });
-
-            stompClient.send("/app/private-message", {}, JSON.stringify({
-                sender: studentName,
-                recipient: facultyName,
-                content: messageContent
-            }));
-
-            addMessageToUI(studentName, messageContent); // Show message instantly
-            messageInput.value = ""; // Clear input field
-        };
-
-        window.handleKeyPress = function (event) {
-            if (event.key === "Enter") {
-                sendMessage();
-            }
-        };
-    });
-
-</script>
 </body>
 </html>

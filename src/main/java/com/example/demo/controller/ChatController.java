@@ -27,9 +27,10 @@ public class ChatController {
 
     // Private Chat
 
-    @MessageMapping("/private-message")
+    @MessageMapping("/private-messages")
     public void sendPrivateMessage(@Payload ChatMessage message, Principal principal) {
         String recipient = message.getRecipient();
+        System.out.println("msg send private");
         messagingTemplate.convertAndSendToUser(recipient, "/queue/messages", message);
     }
 }
