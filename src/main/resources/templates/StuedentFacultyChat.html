@@ -7,114 +7,66 @@
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.0/dist/sockjs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    
+
     <script>
-		var socket = new SockJS('/ws');
-		var	stompClient = Stomp.over(socket);
+        var socket = new SockJS('/StuedentFacultyChat');
+        var stompClient = Stomp.over(socket);
+        var currentSubscription;
 
-		function connect() {
-		    var senderEmail = document.getElementById("senderEmail").value.trim();
-			var receiverEmail = document.getElementById("receiverEmail").value.trim();
+        function generateTopic(sender, receiver) {
+            // Create an ordered unique topic
+            const sorted = [sender, receiver].sort();
+            return '/topic/chat/' + sorted[0] + '-' + sorted[1];
+        }
 
-		    if (!senderEmail) {
-		        alert("Please enter your email to connect.");
-		        return;
-		    }
+        function subscribeToChat() {
+            if (currentSubscription) {
+                currentSubscription.unsubscribe();
+            }
 
-		 
+            const sender = document.getElementById('sender').value;
+            const receiver = document.getElementById('receiver').value;
+            const topic = generateTopic(sender, receiver);
 
-		    stompClient.connect({}, function (frame) {
-		        console.log('Connected: ' + frame);
+            currentSubscription = stompClient.subscribe(topic, function(message) {
+                showMessage(JSON.parse(message.body));
+            });
+        }
 
-		        // Subscribe to private messages for this user
-		        stompClient.subscribe(`/user/${senderEmail}/queue/messages`, function (message) {
-		            let msg = JSON.parse(message.body);
-		            console.log("Received:", msg);
-		            showMessage(msg);
-		        });
+        stompClient.connect({}, function(frame) {
+            console.log('Connected: ' + frame);
+            subscribeToChat(); 
+        });
 
-		        document.getElementById("connectButton").disabled = true;
-		    });
-		}
+        function sendMessage() {
+            var sender = document.getElementById('sender').value;
+            var receiver = document.getElementById('receiver').value;
+            var content = document.getElementById('content').value;
 
-		function sendMessage() {
-		    var senderEmail = document.getElementById("senderEmail").value.trim();
-		    var receiverEmail = document.getElementById("receiverEmail").value.trim();
-		    var messageContent = document.getElementById("message").value.trim();
+            stompClient.send('/app/chat', { 'receiver': receiver }, JSON.stringify({
+                'sender': sender,
+                'receiver': receiver,
+                'content': content
+            }));
+        }
 
-		    if (!stompClient || !senderEmail || !receiverEmail) {
-		        alert("Please connect before sending a message.");
-		        return;
-		    }
+        function showMessage(message) {
+            var messages = document.getElementById('messages');
+            var newMessage = document.createElement('p');
+            newMessage.textContent = message.sender + ': ' + message.content;
+            messages.appendChild(newMessage);
+        }
 
-		    if (messageContent) {
-		        var chatMessage = {
-		            sender: senderEmail,
-		            receiver: receiverEmail,
-		            content: messageContent,
-		            timestamp: new Date().toISOString()
-		        };
-
-		        console.log("Sending Message:", chatMessage);
-		        stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
-			//	stompClient.publish({
-				//       destination: "/app/private-message",
-				  //     body: JSON.stringify({'name': $("#name").val()})
-			//	   });
-		        // Show the sent message instantly for sender
-		        showMessage(chatMessage);
-		        document.getElementById("message").value = "";
-		    }
-		}
-
-		function showMessage(message) {
-		    var senderEmail = document.getElementById("senderEmail").value.trim();
-		    var messageArea = document.getElementById("messageArea");
-
-		    var messageContainer = document.createElement("div");
-		    messageContainer.classList.add("flex", "items-center", "space-x-2", "p-2", "rounded-lg", "my-2", "max-w-md", "w-full");
-
-		    var profileIcon = document.createElement("div");
-		    profileIcon.classList.add("w-8", "h-8", "rounded-full", "bg-gray-500", "flex", "items-center", "justify-center", "text-white", "font-bold");
-		    profileIcon.textContent = message.sender.charAt(0).toUpperCase();
-
-		    var messageElement = document.createElement("div");
-		    messageElement.classList.add("px-4", "py-2", "rounded-lg", "shadow-sm");
-
-		    if (message.sender === senderEmail) {
-		        messageContainer.classList.add("justify-end");
-		        messageElement.classList.add("bg-blue-500", "text-white", "ml-auto", "rounded-br-none");
-		    } else {
-		        messageContainer.classList.add("justify-start");
-		        messageElement.classList.add("bg-gray-300", "rounded-bl-none");
-		    }
-
-		    messageElement.innerHTML = `<span class="font-semibold">${message.sender}:</span> ${message.content}`;
-		    messageContainer.appendChild(profileIcon);
-		    messageContainer.appendChild(messageElement);
-		    messageArea.appendChild(messageContainer);
-		    messageArea.scrollTop = messageArea.scrollHeight;
-		}
-
+        // Resubscribe when sender or receiver changes
+        document.getElementById('sender').addEventListener('change', subscribeToChat);
+        document.getElementById('receiver').addEventListener('change', subscribeToChat);
     </script>
 </head>
-<body class="bg-gradient-to-br from-blue-500 to-purple-600 min-h-screen flex items-center justify-center">
-    <div class="max-w-2xl w-full bg-white p-6 shadow-lg rounded-lg">
-        <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">Private Chat</h2>
-
-        <div class="flex space-x-2 mb-4">
-            <input type="text" id="senderEmail" th:value="${sender}" class="flex-1 border p-3 rounded-lg" placeholder="Enter your email">
-            <input type="text" id="receiverEmail" th:value="${reciever}" class="flex-1 border p-3 rounded-lg" placeholder="Enter receiver's email">
-            <button id="connectButton" onclick="connect()" class="bg-green-500 text-white px-4 py-3 rounded-lg hover:bg-green-600 transition">Connect</button>
-        </div>
-
-        <div id="messageArea" class="h-80 overflow-y-auto bg-gray-100 p-4 border rounded-lg shadow-inner"></div>
-
-        <div class="flex mt-4 space-x-2">
-            <input type="text" id="message" class="flex-1 border p-3 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Type a message...">
-			
-            <button onclick="sendMessage()" class="bg-blue-500 text-white px-4 py-3 rounded-lg hover:bg-blue-600 transition">Send</button>
-        </div>
-    </div>
+<body>
+    <input type="text" id="sender" th:value="${sender}" placeholder="Sender">
+    <input type="text" id="receiver" th:value="${reciever}" placeholder="Receiver">
+    <input type="text" id="content" placeholder="Message">
+    <button onclick="sendMessage()">Send</button>
+    <div id="messages"></div>
 </body>
 </html>

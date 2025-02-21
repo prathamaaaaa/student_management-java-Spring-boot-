@@ -12,7 +12,6 @@ public class ChatMsg {
         this.sender = sender;
         this.receiver = receiver;
         this.content = content;
-        this.timestamp = timestamp;
     }
 
     // Getters and Setters
@@ -22,6 +21,4 @@ public class ChatMsg {
     public void setReceiver(String receiver) { this.receiver = receiver; }
     public String getContent() { return content; }
     public void setContent(String content) { this.content = content; }
-    public String getTimestamp() { return timestamp; }
-    public void setTimestamp(String timestamp) { this.timestamp = timestamp; }
 }

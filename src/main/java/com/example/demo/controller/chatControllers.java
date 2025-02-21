@@ -1,6 +1,8 @@
 package com.example.demo.controller;
+import org.springframework.beans.factory.annotation.Autowired;
 //
 //import com.example.demo.model.AdminModel;
+
 //import com.example.demo.model.ChatMsg;
 //import com.example.demo.repo.AdminRepository;
 //
@@ -43,32 +45,58 @@ package com.example.demo.controller;
 //    }
 //
 //}
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.annotation.SendToUser;
+import org.springframework.stereotype.Controller;
 
+import com.example.demo.model.ChatMsg;
+
+//import com.example.demo.model.AdminModel;
+//import com.example.demo.model.ChatMsg;
+//import com.example.demo.repo.AdminRepository;
+//
+//@Controller
+//public class chatControllers {
+//	
+//	@Autowired
+//	private AdminRepository adminRepository;
+//	
+//    @MessageMapping("/chat")
+//    @SendToUser("/topic/messages")
+//    public ChatMsg sendMessage(@Payload ChatMsg chatMessage) {
+//    	AdminModel admin = adminRepository.findByName(chatMessage.getReceiver());    	
+//			
+//    		return chatMessage;
+//		
+//    }
+//    
+//}
+
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
-import com.example.demo.model.ChatMsg;
+import java.util.Arrays;
 
 @Controller
 public class chatControllers {
 
-    private final SimpMessagingTemplate messagingTemplate;
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
-    public chatControllers(SimpMessagingTemplate messagingTemplate) {
-        this.messagingTemplate = messagingTemplate;
+    @MessageMapping("/chat")
+    public void processMessage(@Payload ChatMsg chatMessage) {
+        String sender = chatMessage.getSender();
+        String receiver = chatMessage.getReceiver();
+        String[] sorted = {sender, receiver};
+        Arrays.sort(sorted);
+        String topic = "/topic/chat/" + sorted[0] + "-" + sorted[1];
+        messagingTemplate.convertAndSend(topic, chatMessage);
     }
-
-    @MessageMapping("/private-message")
-    public void sendPrivateMessage(@Payload ChatMsg message) {
-        System.out.println("Message received: " + message.getContent());
-
-        // Send the message to both users involved in the chat
-        messagingTemplate.convertAndSendToUser(message.getReceiver(), "/queue/messages", message);
-        messagingTemplate.convertAndSendToUser(message.getSender(), "/queue/messages", message);
-        System.out.println("messge recirve" + message.getReceiver());
-        System.out.println("messge send" + message.getSender());
-
-    }
+    
 }
