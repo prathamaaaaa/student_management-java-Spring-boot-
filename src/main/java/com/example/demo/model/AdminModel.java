@@ -54,6 +54,19 @@ public class AdminModel {
 	   
 	@OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<FacultyModel> facultyMembers;
+	
+	
+	@Column(columnDefinition = "TEXT")
+	private String token;
+	
+	
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
 
 	public int getId() {
 		return id;

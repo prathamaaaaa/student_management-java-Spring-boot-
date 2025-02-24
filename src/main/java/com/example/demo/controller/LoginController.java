@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,7 @@ import com.example.demo.model.StudentModel;
 import com.example.demo.repo.AdminRepository;
 import com.example.demo.repo.FacultyRepository;
 import com.example.demo.repo.StudentRepository;
+import com.example.demo.security.JwtUtil;
 import com.example.demo.service.AdminService;
 import com.example.demo.service.EmailService;
 import com.example.demo.validation.adminValidation;
@@ -57,6 +59,11 @@ private adminValidation adminValidation;
 
 
 	private int avg;
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+
+	@Autowired
+	private JwtUtil jwtUtil;
 
 
  @GetMapping("/user")
@@ -72,38 +79,38 @@ private adminValidation adminValidation;
 		
  }
  @PostMapping("/login/check")
- public String loginCheck(    	
- 	@RequestParam String email,
- 	@RequestParam String password,
- 	Model model	) {
- 	
- 	AdminModel admin = adminRepo.findByEmail(email); 
- 	if (admin!=null && admin.getPassword().equals(password)) {
- 		
-         model.addAttribute("admins", admin);
-         
-         if(admin.getRole().equalsIgnoreCase("FACULTY"))
-         {
-         	List<StudentModel> students = studentRepo.findAll();
-         	model.addAttribute("students", students);
+ public String loginCheck(@RequestParam String email, 
+                          @RequestParam String password, 
+                          Model model) {
+     
+     AdminModel admin = adminRepo.findByEmail(email); 
+
+     if (admin != null) {
+         System.out.println("Stored Hashed Password: " + admin.getPassword());
+         System.out.println("Entered Password: " +password);
+         System.out.println("Password Match: " + passwordEncoder.matches(password, admin.getPassword()));
+
+         if (passwordEncoder.matches(password, admin.getPassword())) {
+             String token = jwtUtil.generateToken(email);
+
              model.addAttribute("admins", admin);
-         	StudentModel sm = new StudentModel();
-         	return "facultyPage";  
-         }
-         if(admin.getRole().equalsIgnoreCase("USER"))
-         {
-         	StudentModel students = studentRepo.findByEmail(email);
-         	model.addAttribute("students", students);
-         	StudentModel sm = new StudentModel();
+
+             if (admin.getRole().equalsIgnoreCase("FACULTY")) {
+                 List<StudentModel> students = studentRepo.findAll();
+                 model.addAttribute("students", students);
+                 return "facultyPage";  
+             } 
+             if (admin.getRole().equalsIgnoreCase("USER")) {
+                 StudentModel students = studentRepo.findByEmail(email);
+                 model.addAttribute("students", students);
+                 return "StudentProfile";
+             }
              return "StudentProfile";
          }
-         
-         
-         return "StudentProfile";
-         
-     } else {
-     	return "login";  
-     	
-     }	
+     }
+
+     model.addAttribute("error", "Invalid email or password");
+     return "login";  
  }
+
 }

@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -27,12 +28,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.demo.config.SecurityConfig;
 import com.example.demo.model.AdminModel;
 import com.example.demo.model.FacultyModel;
 import com.example.demo.model.StudentModel;
 import com.example.demo.repo.AdminRepository;
 import com.example.demo.repo.FacultyRepository;
 import com.example.demo.repo.StudentRepository;
+import com.example.demo.security.JwtUtil;
 import com.example.demo.service.AdminService;
 import com.example.demo.service.EmailService;
 import com.example.demo.validation.adminValidation;
@@ -72,8 +75,11 @@ public class AdminController {
 
     @Autowired
     private adminValidation adminValidation;
-
     
+    
+    
+    @Autowired
+    public JwtUtil jwtutil;
 	public String photoUrl;
 
 	public int fees;
@@ -86,6 +92,9 @@ public class AdminController {
 
 
 	private int avg;
+
+	@Autowired
+	private PasswordEncoder passwordEncoder;
     
 	@GetMapping("/Password")
 	 public String Password( Model model) {
@@ -100,26 +109,30 @@ public class AdminController {
 	    model.addAttribute("adminModel", new AdminModel()); 
 	    return "register"; 
 	}
-	 @PostMapping("/submitForm")
-	    public String submitForm(@Valid @ModelAttribute("adminModel") AdminModel adminModel,
-	                             BindingResult result,
-	                             @RequestParam String mobileNumber,
-	                             Model model) {
+	@PostMapping("/submitForm")
+	public ResponseEntity<?> submitForm(@Valid @ModelAttribute("adminModel") AdminModel adminModel,
+	                                    BindingResult result,
+	                                    @RequestParam String mobileNumber,
+	                                    Model model) {
 
-	        if (result.hasErrors()) {
-	            model.addAttribute("error", "There are errors in the form. Please correct them.");
-	            return "register"; 
-	        }
+	    if (result.hasErrors()) {
+	        return ResponseEntity.badRequest().body("Form contains errors.");
+	    }
 
-	        adminService.saveAdminData(adminModel , mobileNumber);
+	    // Hash password before storing
+	    adminModel.setPassword(passwordEncoder.encode(adminModel.getPassword()));
+	    
+	    // Save to DB
+	    adminService.saveAdminData(adminModel, mobileNumber);
 
-	        return "redirect:/login"; 
-	    } 
-	 
-	 
-		 
+	    // Generate JWT token
+	    String token = jwtutil.generateToken(adminModel.getEmail());
+	    String encodedPassword = passwordEncoder.encode(adminModel.getPassword());
+	    System.out.println("Encoded Password: " + encodedPassword);
+	    // Return response with token
+	    return ResponseEntity.ok(token);
+	}
 
-	
 	 
 	 @PostMapping("/updated")    
 	 public String updated(@RequestParam("email") String email,
@@ -163,9 +176,7 @@ public class AdminController {
 //		 
 ////	 }
 	 
-	
 
-	 
 	 
 	 @GetMapping("/delete")
 	 public String delete(Model model ,@RequestParam String facultyEmail,@RequestParam String email ) {
@@ -200,10 +211,7 @@ public class AdminController {
 	     return "payFees";
 	 }
 
-
-
-    
-    
+  
     @GetMapping("/StudentProfiles")
     public String login() {
     	System.out.println("dyofjhj");
@@ -214,6 +222,7 @@ public class AdminController {
     public String showAddDetailPage( Model model , @RequestParam String email) {
     	
     	AdminModel admins = adminRepo.findByEmail(email);
+    	
     	model.addAttribute("admins", admins);
         return "addDetail"; 
     }

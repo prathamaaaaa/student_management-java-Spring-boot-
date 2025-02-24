@@ -9,6 +9,7 @@ import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +23,7 @@ import com.example.demo.model.StudentModel;
 import com.example.demo.repo.AdminRepository;
 import com.example.demo.repo.FacultyRepository;
 import com.example.demo.repo.StudentRepository;
+import com.example.demo.security.JwtUtil;
 import com.example.demo.service.AdminService;
 import com.example.demo.service.EmailService;
 import com.example.demo.validation.adminValidation;
@@ -67,6 +69,12 @@ private adminValidation adminValidation;
 
 
 	private int avg;
+
+	@Autowired
+	private JwtUtil jwtutil;
+
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	
 	 @GetMapping("/facultyPage")
@@ -166,7 +174,7 @@ private adminValidation adminValidation;
 	         @RequestParam String department,
 	         @RequestParam String division,
 //	         @RequestParam int rollNumber,
-	         @RequestParam int id,
+//	         @RequestParam int id,
 	         @RequestParam("marks") String marksJson, // Receive marks as JSON string
 	         @RequestParam("photo") MultipartFile photo,
 	         @RequestParam String role,
@@ -175,7 +183,12 @@ private adminValidation adminValidation;
 	         Model model) throws IOException {
 
 	        String generatedPassword = generatePassword();
-
+	        String emailSubject = "Your Student Portal Password";
+	        String emailText = "Hello " + name + ",\n\nYour password for the student portal is: " + generatedPassword;
+	        emailService.sendEmail(email, emailSubject, emailText);
+	        
+//	        String generatedToken = jwtutil.generateToken(generatedPassword);
+	        String encodedToken = passwordEncoder.encode(generatedPassword);
 	     // Process photo upload
 	     Path path = Paths.get("src/main/resources/static/" + photo.getOriginalFilename());
 	     Files.createDirectories(path.getParent());
@@ -189,7 +202,7 @@ private adminValidation adminValidation;
 	     adminModel.setName(name);
 	     adminModel.setEmail(email);
 	     adminModel.setRole(role);
-	     adminModel.setPassword(generatedPassword);
+	     adminModel.setPassword(encodedToken);
 	     AdminModel savedAdmin = adminRepo.save(adminModel);
 	    
 	     
@@ -221,9 +234,6 @@ private adminValidation adminValidation;
 	     
 	     
 	     
-	     String emailSubject = "Your Student Portal Password";
-	     String emailText = "Hello " + name + ",\n\nYour password for the student portal is: " + generatedPassword;
-	     emailService.sendEmail(email, emailSubject, emailText);
 	        
 	        
 	     model.addAttribute("successMessage", "Student added successfully!");

@@ -43,4 +43,36 @@
     </div>
 
 </body>
+<script>
+	
+	document.addEventListener('DOMContentLoaded', () => {
+	    const form = document.querySelector('form');
+	    form.addEventListener('submit', function(event) {
+	        event.preventDefault(); 
+	        const marks = collectMarks(); 
+	        console.log('Collected Marks:', marks);
+	        const marksInput = document.getElementById('marks');
+	        marksInput.value = JSON.stringify(marks)
+	         form.submit();
+	    });
+	});
+	document.querySelector("form").addEventListener("submit", async function(event) {
+	    event.preventDefault();
+
+	    const formData = new FormData(this);
+	    const response = await fetch("/submitForm", {
+	        method: "POST",
+	        body: formData
+	    });
+
+	    if (response.ok) {
+	        const token = await response.text(); // Get JWT token
+	        localStorage.setItem("jwtToken", token); // Store token in localStorage
+	        alert("Registration successful!");
+	        window.location.href = "/dashboard"; // Redirect to protected page
+	    } else {
+	        alert("Error during registration");
+	    }
+	});
+</script>
 </html>
