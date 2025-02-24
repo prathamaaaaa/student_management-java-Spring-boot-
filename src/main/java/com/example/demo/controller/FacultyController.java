@@ -190,9 +190,10 @@ private adminValidation adminValidation;
 //	        String generatedToken = jwtutil.generateToken(generatedPassword);
 	        String encodedToken = passwordEncoder.encode(generatedPassword);
 	     // Process photo upload
-	     Path path = Paths.get("src/main/resources/static/" + photo.getOriginalFilename());
-	     Files.createDirectories(path.getParent());
-	     Files.write(path, photo.getBytes()); 
+	        Path path = Paths.get("src/main/resources/static/" + photo.getOriginalFilename());
+		     Files.createDirectories(path.getParent());
+		     Files.write(path, photo.getBytes()); 
+
 
 	     // Parse marks JSON string
 	     ObjectMapper objectMapper = new ObjectMapper();

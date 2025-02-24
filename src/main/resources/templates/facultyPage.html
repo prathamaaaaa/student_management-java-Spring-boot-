@@ -109,9 +109,9 @@
                         <td class="px-6 py-4" th:text="${student.name}"></td>
                         <td class="px-6 py-4" th:text="${student.email}"></td>
                         <td class="px-6 py-4" th:text="${student.department}"></td>
-                        <td class="px-6 py-4">
-                            <img th:src="@{${student.photo}}" alt="Student Photo" class="w-16 h-16 object-cover rounded-full shadow-md" />
-                        </td>
+						<td class="px-6 py-4">
+						                           <img th:src="@{${student.photo}}" alt="Student Photo" class="w-16 h-16 object-cover rounded-full shadow-md" />
+						                       </td>
                         <td class="px-6 py-4" th:each="admin : ${admins}">
                             <a
                                 th:href="@{/reportCard(email=${student.email}, facultyEmail=${admin.email})}"
