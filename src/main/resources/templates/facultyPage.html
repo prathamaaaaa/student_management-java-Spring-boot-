@@ -69,10 +69,17 @@
             <div class="flex justify-between">
             <div></div>
             <h2 class="text-4xl text-center font-bold text-blue-600 mb-6 mt-6">Students List</h2>
-            <div th:each="admin : ${admins}" class="mb-8">
-            <a th:href="@{/addDetail?email={email}(email=${admin.email})}" class="mt-6 inline-block px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 transition duration-300">
+            <div th:each="admin : ${admins}" class="mb-8 flex">
+            <a th:href="@{/addDetail?email={email}(email=${admin.email})}" class="mt-6 mr-10 inline-block px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 transition duration-300">
                 Add Student
             </a>
+				 <div th:each="admin : ${admins}">
+
+						<a class="mt-6 inline-block px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 transition duration-300" th:href="@{/FacultyChat?email={email} (email=${admin.email})}">
+						    <button>Group Chat</button>
+						</a>
+
+			</div>
             </div>
             </div>
             <!-- Check if students list is empty or null -->
@@ -124,7 +131,7 @@
 						</a>
 						</td>
                         <td th:each="admin : ${admins}" class="px-6 py-4">
-                            <a th:href="@{/StuedentFacultyChat(reciever=${student.name}, sender=${admin.name})}" class="text-blue-500 hover:text-blue-700 transition duration-200 ease-in-out">
+                            <a th:href="@{/StuedentFacultyChat(reciever=${student.name}, sender=${admin.name},email=${admin.email})}" class="text-blue-500 hover:text-blue-700 transition duration-200 ease-in-out">
                                 Chat
                             </a>
                         </td>
@@ -133,14 +140,7 @@
                 </tbody>
             </table>
 
-            <!-- Add Student Button -->
-			 <div th:each="admin : ${admins}">
-
-			<a th:href="@{/FacultyChat?email={email} (email=${admin.email})}">
-			    <button>Group Chat</button>
-			</a>
-
-</div>
+          
         </section>
     </main>
 

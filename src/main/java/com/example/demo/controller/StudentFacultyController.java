@@ -27,11 +27,14 @@ public class StudentFacultyController {
     public String StuedentFacultyChat(
             @RequestParam("sender") String sender,
             @RequestParam("reciever") String reciever,
+            @RequestParam("email") String email,
             Model model){
 
-//        AdminModel admin = adminRepository.findByEmail(email);
+        AdminModel admin = adminRepository.findByEmail(email);
 //        AdminModel adminf = adminRepository.findByEmail(facultyEmail);
         model.addAttribute("sender", sender);
+        model.addAttribute("admin", admin);
+
 
         model.addAttribute("reciever", reciever);
 

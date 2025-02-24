@@ -56,27 +56,28 @@
                 <a th:href="@{/reportCard?email={email}(email=${students.email})}" class="w-full text-center bg-blue-400 hover:bg-blue-600 text-black px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300">View Report</a>
                 <a th:href="@{/update?email={email}(email=${students.email})}" class="w-full text-center bg-blue-400 hover:bg-blue-600 text-black px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300">Update Profile</a>
             </div>
+			<div class="flex justify-center mt-8 gap-4">
+				<div th:each="students : ${students}">
+
+				    <a class="w-full text-center bg-blue-400 hover:bg-blue-600 text-black px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
+							th:href="@{/StuedentFacultyChat(sender=${students.name}, reciever='sanganiii',email=${students.email})}">
+			            <button> Chat</button>
+		            </a>
+		        </div>
+				<div th:each="students : ${students}">
+									 
+					<a class="w-full text-center bg-blue-400 hover:bg-blue-600 text-black px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300s" th:href="@{/StudentsChat?email={email}(email=${students.email})}">
+						  <button>Group Chat</button>
+					</a>
+						 
+				</div>
+			</div>
 
             <!-- Update Link -->
             <div class="mt-4 text-center">
             </div>
         </div>
 
- <div th:each="students : ${students}">
-			 
-			<a th:href="@{/StudentsChat?email={email}(email=${students.email})}">
-			    <button>Group Chat</button>
-			</a>
- 
-</div>
-
-        <div th:each="students : ${students}">
-
-            <a th:href="@{/StuedentFacultyChat(sender=${students.name}, reciever='sanganiii')}">
-                <button> Chat</button>
-            </a>
-
-        </div>
 </body>
 
 </html>
