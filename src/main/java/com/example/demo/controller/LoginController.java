@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.demo.model.AdminModel;
+import com.example.demo.model.FacultyModel;
 import com.example.demo.model.StudentModel;
 import com.example.demo.repo.AdminRepository;
 import com.example.demo.repo.FacultyRepository;
@@ -102,6 +103,8 @@ private adminValidation adminValidation;
              } 
              if (admin.getRole().equalsIgnoreCase("USER")) {
                  StudentModel students = studentRepo.findByEmail(email);
+                 List<FacultyModel> facuList = facultyRepo.findAll();
+                 model.addAttribute("facuList",facuList);
                  model.addAttribute("students", students);
                  return "StudentProfile";
              }

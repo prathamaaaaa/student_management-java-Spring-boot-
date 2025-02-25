@@ -37,9 +37,11 @@ public class SecurityConfig {
             		.requestMatchers("/StuedentFacultyChat/**", "/favicon.ico","/src/main/resources/static/**"
             				,"/chat-websocket","/addDetail","/static","/ws/**", "/chat/**"
             				,"/updated","/updateByFaculty","/StudentsChat/**","/StudentsChat"
-            				,"/StuedentFacultyChat","/chat-websocket/**","/src/main/resources/static/**",
-            				"/P.png",
-            				"/update","/updatedByFaculty","/FacultyChat/**","/FacultyChat","/Password","/payFees"
+            				,"/StuedentFacultyChat","/chat-websocket/**"
+            				,"/submitData","/searchStudents"
+            				, "/*.png", "/*.jpg", "/*.jpeg"
+            		
+            				,"/update","/updatedByFaculty","/FacultyChat/**","/FacultyChat","/Password","/payFees"
             				,"/register","/StudentProfile","/reportCard","/StudentPage","/FacultyProfile"
             				,"/facultyPage","/addStudent", "/login", "/login/check", "/register"
             				, "/submitForm").permitAll()

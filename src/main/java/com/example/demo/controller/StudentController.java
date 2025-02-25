@@ -1,12 +1,14 @@
 package com.example.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.demo.model.FacultyModel;
 import com.example.demo.model.StudentModel;
 import com.example.demo.repo.AdminRepository;
 import com.example.demo.repo.FacultyRepository;
@@ -64,6 +66,7 @@ private adminValidation adminValidation;
 	 @GetMapping("/StudentProfile")
 	 public String FacultyProfile(@RequestParam("email") String email, Model model) {
 	     StudentModel students = studentRepo.findByEmail(email);
+//	     FacultyModel faculty = facultyRepo.findByEmail(email);
 	     System.out.println(email);
 	     model.addAttribute("students", students);
 	     return "StudentProfile";

@@ -110,14 +110,13 @@ public class AdminController {
 	    return "register"; 
 	}
 	@PostMapping("/submitForm")
-	public ResponseEntity<?> submitForm(@Valid @ModelAttribute("adminModel") AdminModel adminModel,
+	public String submitForm(@Valid @ModelAttribute("adminModel") AdminModel adminModel,
 	                                    BindingResult result,
 	                                    @RequestParam String mobileNumber,
 	                                    Model model) {
 
 	    if (result.hasErrors()) {
-	        return ResponseEntity.badRequest().body("Form contains errors.");
-	    }
+	    	return "register";	    }
 
 	    // Hash password before storing
 	    adminModel.setPassword(passwordEncoder.encode(adminModel.getPassword()));
@@ -130,7 +129,8 @@ public class AdminController {
 	    String encodedPassword = passwordEncoder.encode(adminModel.getPassword());
 	    System.out.println("Encoded Password: " + encodedPassword);
 	    // Return response with token
-	    return ResponseEntity.ok(token);
+//	    return ResponseEntity.ok(token);
+		return "login";
 	}
 
 	 
