@@ -59,7 +59,6 @@ public class StudentModel {
     @ManyToOne 
     private AdminModel admin;
     
-    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "faculty_id")
     private FacultyModel faculty;

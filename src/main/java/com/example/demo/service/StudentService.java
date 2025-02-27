@@ -12,14 +12,19 @@ import com.example.demo.repo.ExampleRepository;
 @Service
 public class StudentService {
     
-    private  ExampleRepository exampleRepository;
-
-    @Autowired
-    public StudentService(ExampleRepository exampleRepository) {
-        this.exampleRepository = exampleRepository;
+//    private  ExampleRepository exampleRepository;
+	private AdminRepository adminRepository;
+	@Autowired
+    public StudentService(AdminRepository adminRepository) {
+        this.adminRepository = adminRepository;
     }
 
-    public List<ExampleModel> getAllStudents() {
-        return exampleRepository.findAll();  // Fetch all students
+//    @Autowired
+//    public StudentService(ExampleRepository exampleRepository) {
+//        this.exampleRepository = exampleRepository;
+//    }
+
+    public List<AdminModel> getAllStudents() {
+        return adminRepository.findAll();  // Fetch all students
     }
 }

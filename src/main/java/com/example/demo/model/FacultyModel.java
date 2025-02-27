@@ -40,7 +40,6 @@ public class FacultyModel {
     @ManyToOne
     @JoinColumn(name = "admin_id")
     private AdminModel admin;
-    @JsonManagedReference
 	@OneToMany(mappedBy = "faculty", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<StudentModel> students;
 

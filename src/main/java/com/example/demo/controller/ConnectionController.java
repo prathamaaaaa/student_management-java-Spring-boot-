@@ -17,7 +17,7 @@ public class ConnectionController {
     private StudentService studentService;
 
     @GetMapping
-    public List<ExampleModel> getAllStudents() {
+    public List<AdminModel> getAllStudents() {
         return studentService.getAllStudents();  // Return list of students
     }
 }
