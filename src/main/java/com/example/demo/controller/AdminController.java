@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -54,12 +55,12 @@ import jakarta.validation.Validator;
 public class AdminController {
     
 	
-	 @Autowired
-	    private EmailService emailService;
+	@Autowired
+    private EmailService emailService;
 	 
 
-	    @Autowired
-	    private JavaMailSender javaMailSender;
+    @Autowired
+    private JavaMailSender javaMailSender;
 
 	@Autowired
 	private AdminRepository adminRepo;
@@ -176,7 +177,11 @@ public class AdminController {
 //		 
 ////	 }
 	 
-
+	 @GetMapping("/adminPanel")
+	 @ResponseBody  // Ensure it returns JSON
+	    public List<AdminModel> getAllAdmins() {
+	        return adminRepo.findAll();
+	    }
 	 
 	 @GetMapping("/delete")
 	 public String delete(Model model ,@RequestParam String facultyEmail,@RequestParam String email ) {

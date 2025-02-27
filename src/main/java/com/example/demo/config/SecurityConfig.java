@@ -38,9 +38,8 @@ public class SecurityConfig {
             				,"/chat-websocket","/addDetail","/static","/ws/**", "/chat/**"
             				,"/updated","/updateByFaculty","/StudentsChat/**","/StudentsChat"
             				,"/StuedentFacultyChat","/chat-websocket/**"
-            				,"/submitData","/searchStudents"
-            				, "/*.png", "/*.jpg", "/*.jpeg"
-            		
+            				,"/submitData","/searchStudents","/*"
+            				, "/*.png", "/*.jpg", "/*.jpeg","/adminpanel","/admin/students","/students"
             				,"/update","/updatedByFaculty","/FacultyChat/**","/FacultyChat","/Password","/payFees"
             				,"/register","/StudentProfile","/reportCard","/StudentPage","/FacultyProfile"
             				,"/facultyPage","/addStudent", "/login", "/login/check", "/register"

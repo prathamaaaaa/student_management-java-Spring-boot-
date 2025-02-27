@@ -2,6 +2,9 @@ package com.example.demo.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -33,10 +36,11 @@ public class FacultyModel {
     private String password;
     private String mobileNumber;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "admin_id")
     private AdminModel admin;
-    
+    @JsonManagedReference
 	@OneToMany(mappedBy = "faculty", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<StudentModel> students;
 

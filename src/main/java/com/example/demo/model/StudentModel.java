@@ -6,6 +6,8 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 
@@ -51,10 +53,13 @@ public class StudentModel {
     @Lob
     @Column(columnDefinition = "TEXT")
     private String marks1; 
-
+    
+    
+    @JsonBackReference
     @ManyToOne 
     private AdminModel admin;
     
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "faculty_id")
     private FacultyModel faculty;

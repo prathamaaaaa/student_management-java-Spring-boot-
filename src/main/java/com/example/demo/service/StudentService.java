@@ -2,21 +2,24 @@ package com.example.demo.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.example.demo.model.StudentModel;
-import com.example.demo.repo.StudentRepository;
-
+import com.example.demo.model.AdminModel;
+import com.example.demo.model.ExampleModel;
+import com.example.demo.repo.AdminRepository;
+import com.example.demo.repo.ExampleRepository;
 
 @Service
 public class StudentService {
-	 private final StudentRepository studentRepository;
+    
+    private  ExampleRepository exampleRepository;
 
-	    public StudentService(StudentRepository studentRepository) {
-	        this.studentRepository = studentRepository;
-	    }
+    @Autowired
+    public StudentService(ExampleRepository exampleRepository) {
+        this.exampleRepository = exampleRepository;
+    }
 
-//	    public List<StudentModel> searchByName(String name) {
-//	        return studentRepository.findByNameContaining(name);
-//	    }
+    public List<ExampleModel> getAllStudents() {
+        return exampleRepository.findAll();  // Fetch all students
+    }
 }
