@@ -78,7 +78,7 @@
         <div class=" gap-6">
     <!-- Centered Heading -->
     <div class="flex justify-end">
-        <a th:href="@{/StudentProfile?email={email}(email=${students.email})}" class="bg-green-500 hover:bg-green-600 text-white py-2 px-6 rounded-md transition-colors duration-300">Profile</a>
+        <a th:href="@{/all/StudentProfile?email={email}(email=${students.email})}" class="bg-green-500 hover:bg-green-600 text-white py-2 px-6 rounded-md transition-colors duration-300">Profile</a>
     </div>
     <div class="col-span-3 text-center">
         <h2 class="text-3xl font-bold text-gray-800 mb-6">Update your Profile</h2>
@@ -90,7 +90,7 @@
     <!-- Profile link on the right side -->
 </div>
 
-            <form action="/updated" method="POST" enctype="multipart/form-data" class="space-y-4">
+            <form action="/all/updated" method="POST" enctype="multipart/form-data" class="space-y-4">
                 <!-- Name -->
                 <div th:each="students : ${students}" >
                     <label for="name" class="block font-bold text-lg">Name *</label>
@@ -125,8 +125,14 @@
                 <div>
 				    <label for="photo" class="block font-bold text-lg">Upload Photo *</label>
 				    <input type="file" id="photo" name="photo" class="border rounded-lg p-2 w-full" accept="students.photo" onchange="previewImage(event)">
-				    <!-- Image preview -->
+				    <!-- Image preview
 				    <img id="photoPreview" th:src="${students.photo}" alt="Image Preview" style="margin-top: 10px; width: 150px; height: 150px; object-fit: cover;">
+					-->
+					<img th:src="'data:' + ${students.photoType} + ';base64,' + ${students.photo}" 
+							 alt="Student Photo"
+					     class="w-16 h-16 object-cover rounded-full shadow-md" 
+						 style="margin-top: 10px; width: 150px; height: 150px; object-fit: cover;"
+						 id="photoPreview"/>
 				</div>
 
 

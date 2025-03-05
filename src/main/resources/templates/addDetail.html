@@ -74,7 +74,7 @@
     <div class="container mx-auto p-8">
         <div class="bg-white shadow-md rounded-lg p-8">
                <div th:each="admin : ${admins}" class="flex justify-end ">
-      			<a th:href="@{/facultyPage?facultyEmail={facultyEmail}(facultyEmail=${admin.email})}" class=" text-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors duration-300">Profile</a>
+      			<a th:href="@{/all/facultyPage?facultyEmail={facultyEmail}(facultyEmail=${admin.email})}" class=" text-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors duration-300">Profile</a>
             
             </div>
             <h2 class="text-3xl font-bold mb-6 flex justify-center">Add Student</h2>
@@ -84,16 +84,21 @@
             </div>
      
             
-            <form action="/addStudent" method="POST" enctype="multipart/form-data" class="space-y-4">
+            <form action="/all/addStudent" method="POST" enctype="multipart/form-data" class="space-y-4">
                 <!-- Name -->
                 <div>
                     <label for="name" class="block font-bold text-lg">Name *</label>
                     <input type="text" id="name" name="name" class="border rounded-lg p-2 w-full" placeholder="Enter student's name" required>
                 </div>
 				
-                <!-- Password -->
-                
+				<div th:each="faculty : ${faculty}">
+				<input type="hidden" id="facultyId" name="facultyId" th:value="${faculty.id}" />
+				</div>-->
+                <!-- Password 
+
+				    <input type="number" id="fid" name="fid" th:value="${faculty.id}" class="border rounded-lg p-2 w-full">
                 <!-- Email -->
+
                 <div>
                     <label for="email" class="block font-bold text-lg">Email *</label>
                     <input type="email" id="email" name="email" class="border rounded-lg p-2 w-full" placeholder="Enter student's email" required>

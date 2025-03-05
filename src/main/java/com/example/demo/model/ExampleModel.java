@@ -34,16 +34,9 @@ public class ExampleModel {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	
-	
     private String name;
 	
     private String email;
-
-   
-	
-	
-	
-	
 
 	public int getId() {
 		return id;
@@ -69,8 +62,5 @@ public class ExampleModel {
 		this.email = email;
 	}
 
-	
-
-	
 }
 

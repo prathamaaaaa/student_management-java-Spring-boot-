@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.List;
 import java.util.Random;
 
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,6 +36,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 @Controller
+@RequestMapping("/all")
 public class FacultyController {
 	 @Autowired
 	    private EmailService emailService;
@@ -83,9 +86,11 @@ private adminValidation adminValidation;
 	         @RequestParam String facultyEmail
 	       ) {
      	List<StudentModel> students = studentRepo.findAll();
-     	AdminModel admins = adminRepo.findByEmail(facultyEmail);     		
+     	AdminModel admins = adminRepo.findByEmail(facultyEmail);
+     	FacultyModel faculty = facultyRepo.findByEmail(facultyEmail);
             model.addAttribute("admins", admins);
 	     model.addAttribute("students", students);
+	     model.addAttribute("faculty", faculty);
 	     return "facultyPage"; 
 	 }
 
@@ -138,11 +143,16 @@ private adminValidation adminValidation;
 	     System.out.println(email);
 	     
 	     if (photo != null && !photo.isEmpty()) {
-	         Path path = Paths.get("src/main/resources/static/" + photo.getOriginalFilename());
-	         Files.createDirectories(path.getParent());
-	         Files.write(path, photo.getBytes());
-	         
-	         students.setPhoto("/" + photo.getOriginalFilename());
+//	         Path path = Paths.get("src/main/resources/static/" + photo.getOriginalFilename());
+//	         Files.createDirectories(path.getParent());
+//	         Files.write(path, photo.getBytes());
+	         // Convert photo to Base64
+		     String base64Photo = null;
+		     if (photo != null && !photo.isEmpty()) {
+		         base64Photo = Base64.getEncoder().encodeToString(photo.getBytes());
+		     }
+//	         students.setPhoto("/" + photo.getOriginalFilename());
+	         students.setPhoto(base64Photo);
 	         System.out.println("New photo uploaded: " + photo.getOriginalFilename());
 	     } else {
 	         System.out.println("No new photo uploaded. Keeping the existing photo.");
@@ -164,7 +174,7 @@ private adminValidation adminValidation;
 	     model.addAttribute("students", students);
 	     model.addAttribute("marks", marks); 	     
 
-	     return "redirect:/facultyPage?facultyEmail=" + facultyEmail;
+	     return "redirect:/all/facultyPage?facultyEmail=" + facultyEmail;
 	}
 	
 	 
@@ -179,7 +189,9 @@ private adminValidation adminValidation;
 	         @RequestParam("marks") String marksJson, // Receive marks as JSON string
 	         @RequestParam("photo") MultipartFile photo,
 	         @RequestParam String role,
-	         @RequestParam String facultyEmail, 
+	         @RequestParam String facultyEmail,
+//	         @RequestParam FacultyModel fid,
+	         @RequestParam("facultyId") int facultyId,
 	        
 	         Model model) throws IOException {
 
@@ -196,6 +208,14 @@ private adminValidation adminValidation;
 		     Files.write(path, photo.getBytes()); 
 
 
+		     
+		     // Convert photo to Base64
+		     String base64Photo = null;
+		     if (photo != null && !photo.isEmpty()) {
+		         base64Photo = Base64.getEncoder().encodeToString(photo.getBytes());
+		     }
+		     
+		     
 	     // Parse marks JSON string
 	     ObjectMapper objectMapper = new ObjectMapper();
 	     List<Integer> marks = objectMapper.readValue(marksJson, new com.fasterxml.jackson.core.type.TypeReference<List<Integer>>() {});
@@ -205,6 +225,7 @@ private adminValidation adminValidation;
 	     adminModel.setEmail(email);
 	     adminModel.setRole(role);
 	     adminModel.setPassword(encodedToken);
+	 
 	     AdminModel savedAdmin = adminRepo.save(adminModel);
 	    
 	     
@@ -219,7 +240,12 @@ private adminValidation adminValidation;
 
 	     System.out.println("Total Marks: " + totalMarks);
 	     
+	     
+	     FacultyModel faculty = facultyRepo.findByEmail(facultyEmail);
+	     FacultyModel facultyid = facultyRepo.findById(facultyId);
 	     StudentModel student = new StudentModel();
+	     
+	     
 	     student.setName(name);
 	     student.setEmail(email);
 	     student.setDepartment(department);
@@ -229,8 +255,11 @@ private adminValidation adminValidation;
 	     student.setFees(fees);
 	     student.setPercentage(percentage);
 	     student.setTotalMarks(totalMarks);
-	     student.setPhoto("/" + photo.getOriginalFilename());
+//	     student.setPhoto("/" + photo.getOriginalFilename());
+	     student.setPhoto(base64Photo); // Store Base64 photo
+
 	     student.setAdmin(savedAdmin);
+	     student.setFaculty(facultyid);
 
 	     studentRepo.save(student);
 	     
@@ -241,7 +270,7 @@ private adminValidation adminValidation;
 	     model.addAttribute("successMessage", "Student added successfully!");
 
 	     
-	     return "redirect:/addDetail?email=" + facultyEmail ;
+	     return "redirect:/all/addDetail?email=" + facultyEmail;
 	 
 	 }
 	 

@@ -46,6 +46,7 @@ public class StudentModel {
 //    private int rollNumber;
     private String division;
     @Lob
+    @Column(columnDefinition = "LONGTEXT") // Ensures MySQL stores it as LONGTEXT
     private String photo; 
     private int fees;
     private int totalMarks;
@@ -54,13 +55,23 @@ public class StudentModel {
     @Column(columnDefinition = "TEXT")
     private String marks1; 
     
+    private String photoType; // Store MIME type like "image/png", "image/jpeg"
+
     
-    @JsonBackReference
+    public String getPhotoType() {
+		return photoType;
+	}
+
+	public void setPhotoType(String photoType) {
+		this.photoType = photoType;
+	}
+
+	@JsonBackReference
     @ManyToOne 
     private AdminModel admin;
     
     @ManyToOne
-    @JoinColumn(name = "faculty_id")
+    @JoinColumn(name = "Faculty", referencedColumnName = "id") // Ensure correct foreign key mapping
     private FacultyModel faculty;
 
 	public FacultyModel getFaculty() {

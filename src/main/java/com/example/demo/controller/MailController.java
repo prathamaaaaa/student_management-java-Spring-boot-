@@ -7,6 +7,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.demo.model.AdminModel;
@@ -18,6 +19,7 @@ import com.example.demo.service.EmailService;
 import com.example.demo.validation.adminValidation;
 
 @Controller
+@RequestMapping("/all")
 public class MailController {
 	
 		@Autowired

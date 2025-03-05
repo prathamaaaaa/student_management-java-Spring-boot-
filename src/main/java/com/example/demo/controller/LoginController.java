@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.demo.model.AdminModel;
@@ -24,6 +25,7 @@ import com.example.demo.validation.adminValidation;
 
 
 @Controller
+@RequestMapping("/all")
 public class LoginController {
 	 @Autowired
 	    private EmailService emailService;
@@ -98,7 +100,11 @@ private adminValidation adminValidation;
 
              if (admin.getRole().equalsIgnoreCase("FACULTY")) {
                  List<StudentModel> students = studentRepo.findAll();
+                
+                 FacultyModel faculty = facultyRepo.findByEmail(email);
                  model.addAttribute("students", students);
+                 model.addAttribute("faculty", faculty);
+
                  return "facultyPage";  
              } 
              if (admin.getRole().equalsIgnoreCase("USER")) {

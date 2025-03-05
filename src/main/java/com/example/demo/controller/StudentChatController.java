@@ -5,6 +5,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.demo.model.AdminModel;
@@ -15,6 +16,7 @@ import com.example.demo.repo.StudentRepository;
 import com.example.demo.service.EmailService;
 
 @Controller
+@RequestMapping("/all")
 public class StudentChatController {
 	 @Autowired
 	    private EmailService emailService;

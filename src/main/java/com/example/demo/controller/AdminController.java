@@ -7,6 +7,7 @@ import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -52,6 +54,7 @@ import jakarta.validation.Validator;
 
 
 @Controller
+@RequestMapping("/all")
 public class AdminController {
     
 	
@@ -147,11 +150,15 @@ public class AdminController {
 	     System.out.println(email);
 	     
 	     if (photo != null && !photo.isEmpty()) {
-	         Path path = Paths.get("src/main/resources/static/" + photo.getOriginalFilename());
-	         Files.createDirectories(path.getParent());
-	         Files.write(path, photo.getBytes());
-	         
-	         students.setPhoto("/" + photo.getOriginalFilename());
+//	         Path path = Paths.get("src/main/resources/static/" + photo.getOriginalFilename());
+//	         Files.createDirectories(path.getParent());
+//	         Files.write(path, photo.getBytes());
+	    	 String base64Photo = null;
+		     if (photo != null && !photo.isEmpty()) {
+		         base64Photo = Base64.getEncoder().encodeToString(photo.getBytes());
+		     }
+		     students.setPhoto(base64Photo);
+//	         students.setPhoto("/" + photo.getOriginalFilename());
 	         System.out.println("New photo uploaded: " + photo.getOriginalFilename());
 	     } else {
 	         System.out.println("No new photo uploaded. Keeping the existing photo.");
@@ -191,7 +198,7 @@ public class AdminController {
 		 AdminModel admins = adminRepo.findByEmail(email);
 		 adminRepo.delete(admins);
 		 
-		 return "redirect:/facultyPage?facultyEmail="+facultyEmail;
+		 return "redirect:/all/facultyPage?facultyEmail="+facultyEmail;
 	 }
 	 
 	 @PostMapping("/submitData")
@@ -227,8 +234,10 @@ public class AdminController {
     public String showAddDetailPage( Model model , @RequestParam String email) {
     	
     	AdminModel admins = adminRepo.findByEmail(email);
+    	FacultyModel faculty = facultyRepo.findByEmail(email);
     	
     	model.addAttribute("admins", admins);
+    	model.addAttribute("faculty", faculty);
         return "addDetail"; 
     }
     

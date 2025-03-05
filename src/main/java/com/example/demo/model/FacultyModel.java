@@ -40,18 +40,9 @@ public class FacultyModel {
     @ManyToOne
     @JoinColumn(name = "admin_id")
     private AdminModel admin;
-	@OneToMany(mappedBy = "faculty", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<StudentModel> students;
 
 
 
-	public List<StudentModel> getStudents() {
-		return students;
-	}
-
-	public void setStudents(List<StudentModel> students) {
-		this.students = students;
-	}
 
 	public int getId() {
 		return id;

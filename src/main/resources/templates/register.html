@@ -12,7 +12,7 @@
             <h1 class="text-3xl sm:text-4xl font-semibold text-center text-gray-800 mb-8">Admin Page</h1>
 
 
-<form method="post" action="/submitForm" th:object="${adminModel}" class="space-y-6">
+<form method="post" action="/all/submitForm" th:object="${adminModel}" class="space-y-6">
     <div class="mb-4">
         <label for="name" class="block text-xl font-medium text-gray-700">Name:</label>
         <input type="text" id="name" th:field="*{name}" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">

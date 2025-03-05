@@ -11,7 +11,7 @@
         <div class="bg-white p-8 rounded-lg shadow-2xl w-full sm:max-w-md md:max-w-lg lg:max-w-xl">
             <h1 class="text-3xl sm:text-4xl font-semibold text-center text-gray-800 mb-8">Admin Page</h1>
 
-    <form method="post" action="/submitForm" class="space-y-6" th:object="${adminModel}">
+    <form method="post" action="/all/submitForm" class="space-y-6" th:object="${adminModel}">
     <div class="mb-4">
         <label for="name" class="block text-xl font-medium text-gray-700">Name:</label>
         <input type="text" id="name" name="name" th:field="*{name}" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
@@ -60,7 +60,7 @@
 	    event.preventDefault();
 
 	    const formData = new FormData(this);
-	    const response = await fetch("/submitForm", {
+	    const response = await fetch("/all/submitForm", {
 	        method: "POST",
 	        body: formData
 	    });

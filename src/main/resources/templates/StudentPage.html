@@ -16,7 +16,7 @@
 </script>
 <body>
     <h1>student profile</h1>
-<form action="/submitData" method="post">
+<form action="/all/submitData" method="post">
         <tr th:each="student : ${students}">
 
     <input type="hidden" name="studentEmail" th:value="${student.email}">
@@ -49,7 +49,7 @@
     			<img th:src="@{${student.photo}}" alt="Student Photo" style="height: 100px; width: 100px "/>
 			</td>
                 <td th:text="${student.fees}"></td>
-<td><a th:href="@{/StudentProfile?paramName={email}(email=${student.email})}">Go to Target Page</a></td>
+<td><a th:href="@{/all/StudentProfile?paramName={email}(email=${student.email})}">Go to Target Page</a></td>
         </tr>
         
     </tbody>

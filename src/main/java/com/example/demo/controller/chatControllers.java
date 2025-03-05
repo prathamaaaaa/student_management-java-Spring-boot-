@@ -50,6 +50,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.example.demo.model.ChatMsg;
 
@@ -84,6 +85,7 @@ import org.springframework.stereotype.Controller;
 import java.util.Arrays;
 
 @Controller
+@RequestMapping("/all")
 public class chatControllers {
 
     @Autowired

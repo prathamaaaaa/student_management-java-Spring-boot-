@@ -3,11 +3,13 @@ package com.example.demo;
 import org.hibernate.cfg.Environment;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import jakarta.annotation.PostConstruct;
 
 @SpringBootApplication
+@EnableFeignClients
 public class StudentSystemManagementApplication {
 
 	public static void main(String[] args) {

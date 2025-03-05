@@ -14,14 +14,16 @@
     }
 </script>
 <body class="bg-gray-100 font-sans text-gray-900">
-
+	<div th:each="faculty : ${faculty}" class="hidden container mx-auto flex justify-between items-center">
+	            <h1 class="text-4xl font-semibold text-white tracking-wide" th:text="${faculty.id}"></h1>
+	</div>
     <header class="bg-blue-700 text-white p-6 shadow-lg">
         <div th:each="admin : ${admins}" class="container mx-auto flex justify-between items-center">
             <h1 class="text-4xl font-semibold text-white tracking-wide" th:text="${admin.name}"></h1>
             <div class="flex space-x-6">
-                <a th:href="@{/FacultyProfile?email={email}(email=${admin.email})}" class="text-white hover:text-gray-300 transition duration-300">Profile</a>
+                <a th:href="@{/all/FacultyProfile?email={email}(email=${admin.email})}" class="text-white hover:text-gray-300 transition duration-300">Profile</a>
                 <span>/</span>
-                <a th:href="@{/login}" class="text-white hover:text-gray-300 transition duration-300">Logout</a>
+                <a th:href="@{/all/login}" class="text-white hover:text-gray-300 transition duration-300">Logout</a>
             </div>
         </div>
     </header>
@@ -29,7 +31,7 @@
     <!-- Search Bar Section -->
     <div class="bg-white shadow-lg p-6 mt-6 rounded-lg mx-auto max-w-7xl">
         <div class="container mx-auto flex justify-between items-center">
-            <form action="/searchStudents" method="get" class="w-full md:w-2/3 flex space-x-4" target="_self">
+            <form action="/all/searchStudents" method="get" class="w-full md:w-2/3 flex space-x-4" target="_self">
                 <div th:each="admin : ${admins}" class="hidden">
                     <input
                         type="email"
@@ -55,7 +57,7 @@
                 </button>
             </form>
             <button
-                class="ml-4 px-6 py-3 bg-gray-300 text-gray-700 rounded-lg shadow-md hover:bg-gray-400 focus:ring-2 focus:ring-gray-500 transition duration-300"
+                class="ml-4 px-6 py-3	 bg-gray-300 text-gray-700 rounded-lg shadow-md hover:bg-gray-400 focus:ring-2 focus:ring-gray-500 transition duration-300"
                 onclick="resetSearch()"
             >
                 Reset
@@ -70,12 +72,15 @@
             <div></div>
             <h2 class="text-4xl text-center font-bold text-blue-600 mb-6 mt-6">Students List</h2>
             <div th:each="admin : ${admins}" class="mb-8 flex">
-            <a th:href="@{/addDetail?email={email}(email=${admin.email})}" class="mt-6 mr-10 inline-block px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 transition duration-300">
+				<div th:each="faculty : ${faculty}" class="">
+
+            <a th:href="@{/all/addDetail?(email=${admin.email}, fId=${faculty.id})}" class="mt-6 mr-10 inline-block px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 transition duration-300">
                 Add Student
             </a>
+			</div>
 				 <div th:each="admin : ${admins}">
 
-						<a class="mt-6 inline-block px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 transition duration-300" th:href="@{/FacultyChat?email={email} (email=${admin.email})}">
+						<a class="mt-6 inline-block px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 transition duration-300" th:href="@{/all/FacultyChat?email={email} (email=${admin.email})}">
 						    <button>Group Chat</button>
 						</a>
 
@@ -88,50 +93,62 @@
             </div>
 
             <!-- Display table if students exist -->
-            <table id="studentsTable" class="min-w-full table-auto bg-white shadow-lg rounded-lg overflow-hidden" th:unless="${students == null or students.isEmpty()}">
+            <table id="studentsTable" th:each="faculty : ${faculty}" class="min-w-full table-auto bg-white shadow-lg rounded-lg overflow-hidden" th:unless="${students == null or students.isEmpty()}">
                 <thead class="bg-blue-600 text-white">
                     <tr>
                         <th class="px-6 py-3 text-left">Name</th>
-                        <th class="px-6 py-3 text-left">Email</th>
                         <th class="px-6 py-3 text-left">Department</th>
                         <th class="px-6 py-3 text-left">Photo</th>
-                        <th class="px-6 py-3 text-left">Actions</th>
+                        <th class="px-6 py-3 text-left">Report card</th>
+                        <th class="px-6 py-3 text-left">Fees</th>
                         <th class="px-6 py-3 text-left">Edit</th>
                         <th class="px-6 py-3 text-left">Delete</th>
                         <th class="px-6 py-3 text-left">Chat</th>
 
 
+
                     </tr>
                 </thead>
-                <tbody>
+                <tbody th:each="student : ${students}">
                     <!-- Iterate over students -->
-                    <tr th:each="student : ${students}" class="border-b hover:bg-gray-50 transition duration-300">
+					
+					<tr  th:if="${student.faculty.id == faculty.id}" class="border-b hover:bg-gray-50 transition duration-300">
                         <td class="px-6 py-4" th:text="${student.name}"></td>
-                        <td class="px-6 py-4" th:text="${student.email}"></td>
                         <td class="px-6 py-4" th:text="${student.department}"></td>
 						<td class="px-6 py-4">
-						                           <img th:src="@{${student.photo}}" alt="Student Photo" class="w-16 h-16 object-cover rounded-full shadow-md" />
-						                       </td>
+						   <!-- <img th:src="@{${student.photo}}" alt="Student Photo" class="w-16 h-16 object-cover rounded-full shadow-md" />
+						   
+						   <img th:src="'data:image/png;base64,' + ${student.photo}" 
+						        alt="Student Photo" 
+						        class="w-16 h-16 object-cover rounded-full shadow-md" /> -->
+								
+								
+								<img th:src="'data:' + ${student.photoType} + ';base64,' + ${student.photo}" 
+								     alt="Student Photo" 
+								     class="w-16 h-16 object-cover rounded-full shadow-md" />
+
+	                   </td>
                         <td class="px-6 py-4" th:each="admin : ${admins}">
                             <a
-                                th:href="@{/reportCard(email=${student.email}, facultyEmail=${admin.email})}"
+                                th:href="@{/all/reportCard(email=${student.email}, facultyEmail=${admin.email})}"
                                 class="text-blue-500 hover:text-blue-700 transition duration-200 ease-in-out">
                                 View Report
                             </a>
+                        <td class="px-6 py-4" th:text="${student.fees}"></td>
                         </td>
                         <td th:each="admin : ${admins}"class="px-6 py-4">
-						    <a th:href="@{/updateByFaculty(email=${student.email}, facultyEmail=${admin.email})}" class="text-blue-500 hover:text-blue-700 transition duration-200 ease-in-out">
+						    <a th:href="@{/all/updateByFaculty(email=${student.email}, facultyEmail=${admin.email})}" class="text-blue-500 hover:text-blue-700 transition duration-200 ease-in-out">
 						    Edit
 						</a>
 
 						</td>
                         <td th:each="admin : ${admins}" class="px-6 py-4">
-							<a th:href="@{/delete(email=${student.email}, facultyEmail=${admin.email})}" class="text-blue-500 hover:text-blue-700 transition duration-200 ease-in-out">
+							<a th:href="@{/all/delete(email=${student.email}, facultyEmail=${admin.email})}" class="text-blue-500 hover:text-blue-700 transition duration-200 ease-in-out">
 						    Delete
 						</a>
 						</td>
                         <td th:each="admin : ${admins}" class="px-6 py-4">
-                            <a th:href="@{/StuedentFacultyChat(reciever=${student.name}, sender=${admin.name},email=${admin.email})}" class="text-blue-500 hover:text-blue-700 transition duration-200 ease-in-out">
+                            <a th:href="@{/all/StuedentFacultyChat(reciever=${student.name}, sender=${admin.name},email=${admin.email})}" class="text-blue-500 hover:text-blue-700 transition duration-200 ease-in-out">
                                 Chat
                             </a>
                         </td>

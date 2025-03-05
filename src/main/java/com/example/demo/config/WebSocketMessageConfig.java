@@ -21,4 +21,3 @@ public class WebSocketMessageConfig implements WebSocketMessageBrokerConfigurer 
         registry.setUserDestinationPrefix("/users"); // Routes messages to users
     }
 }
-//

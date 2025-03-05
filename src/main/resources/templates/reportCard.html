@@ -119,7 +119,7 @@
     <div class="container">
         <div th:each="admin : ${admins}" class="flex justify-end">
   <a 
-    th:href="@{/facultyPage?facultyEmail={facultyEmail}(facultyEmail=${admin.email})}" 
+    th:href="@{/all/facultyPage?facultyEmail={facultyEmail}(facultyEmail=${admin.email})}" 
     class="text-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors duration-300 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
   >
     Home
@@ -134,7 +134,9 @@
             <tbody>
                 <tr>
                     <td><strong>Name : </strong><span th:text="${students.name}"></span></td>
-                    <td rowspan="4"><img th:src="@{${students.photo}}" alt="Student Photo" /></td>
+                    <td rowspan="4">					<img th:src="'data:' + ${students.photoType} + ';base64,' + ${students.photo}" 
+																	     alt="Student Photo" 
+																	     class="w-16 h-16 object-cover rounded-full shadow-md" /></td>
                 </tr>
                 <tr>
                     <td><strong>Email :  </strong><span th:text="${students.email}"></span></td>

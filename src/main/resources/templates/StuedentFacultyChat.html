@@ -60,9 +60,9 @@
             newMessage.className = "p-2 rounded-lg text-white max-w-xs mb-2";
             
             if (message.sender === document.getElementById('sender').value) {
-                newMessage.classList.add("bg-blue-500", "self-end");
+                newMessage.classList.add("bg-blue-600", "self-end");
             } else {
-                newMessage.classList.add("bg-gray-600", "self-start");
+                newMessage.classList.add("bg-gray-700", "self-start");
             }
 
             newMessage.innerHTML = `<strong>${message.sender}:</strong> ${message.content}`;
@@ -74,39 +74,39 @@
         document.getElementById('sender').addEventListener('change', subscribeToChat);
         document.getElementById('receiver').addEventListener('change', subscribeToChat);
     </script>
+    <style>
+        .custom-gradient {
+            background: linear-gradient(135deg, #6B7280, #374151); /* Darker gradient */
+        }
+        .custom-gradient-light {
+            background: linear-gradient(135deg, #E5E7EB, #D1D5DB); /* Lighter gradient */
+        }
+    </style>
 </head>
-<body class="flex items-center justify-center min-h-screen bg-gray-100">
+<body class="flex items-center justify-center min-h-screen bg-gray-200">
     <div class="bg-white shadow-lg rounded-lg p-6 w-full max-w-md">
 		<div th:each="admin : ${admin}" class="px-6 py-4">
 				<div th:if="${admin.role == 'USER'}">
 					<h2 class="text-xl font-semibold text-gray-700 mb-4 text-center">Student to Faculty</h2>
-
-					
 				</div>
 				<div th:if="${admin.role == 'FACULTY'}">
-							
-							
 					<h2 class="text-xl font-semibold text-gray-700 mb-4 text-center">Faculty to Student</h2>
-						</div>
-
 				</div>
-        <div class="mb-4 ">
+		</div>
+        <div class="mb-4">
 			<label for="sender" class="block text-gray-600 font-semibold">Sender</label>
-
-            <input type="text" id="sender" th:value="${sender}" placeholder="Sender" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-400">
+            <input type="text" id="sender" th:value="${sender}" placeholder="Sender" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-gray-600">
         </div>
         <div class="mb-4">
 			<label for="receiver" class="block text-gray-600 font-semibold">Receiver</label>
-            <input type="text" id="receiver" th:value="${reciever}" placeholder="Receiver" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-400">
+            <input type="text" id="receiver" th:value="${reciever}" placeholder="Receiver" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-gray-600">
         </div>
 		
-
-        <div id="messages" class="bg-gray-200 p-3 h-64 overflow-y-auto rounded-lg flex flex-col"></div>
+        <div id="messages" class="bg-gray-100 p-3 h-64 overflow-y-auto rounded-lg flex flex-col"></div>
 
         <div class="mt-4 flex">
-
-            <input type="text" id="content" placeholder="Type a message..." class="flex-1 p-2 border rounded-l-lg focus:ring-2 focus:ring-blue-400">
-            <button onclick="sendMessage()" class="bg-blue-500 text-white px-4 py-2 rounded-r-lg hover:bg-blue-600">Send</button>
+            <input type="text" id="content" placeholder="Type a message..." class="flex-1 p-2 border rounded-l-lg focus:ring-2 focus:ring-gray-600">
+            <button onclick="sendMessage()" class="bg-gray-700 text-white px-4 py-2 rounded-r-lg hover:bg-gray-800">Send</button>
         </div>
     </div>
 </body>
